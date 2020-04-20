@@ -1,0 +1,58 @@
+aliases:
+  - &prepare_ssh_key
+    name: Prepare SSH key
+    command: |
+      mkdir -p .ssh
+      echo ${SSH_PRIV_KEY} | base64 --decode > .ssh/id_rsa
+      chmod 0600 .ssh/id_rsa
+  - &assume_dev_admin_role
+    name: Assume Admin role on dev account
+    command: |
+      unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
+      export AWS_ACCESS_KEY_ID="${AWS_MASTER_ACCOUNT_ACCESS_KEY_ID}"
+      export AWS_SECRET_ACCESS_KEY="${AWS_MASTER_ACCOUNT_SECRET_ACCESS_KEY}"
+      TOKEN=$(aws sts assume-role \
+        --role-arn arn:aws:iam::454455319752:role/Dev-Admin \
+        --role-session-name "$(head /dev/urandom | LC_CTYPE=C tr -dc A-Za-z0-9 | head -c 18 ; echo '')"\
+        )
+      echo "export AWS_ACCESS_KEY_ID=$(echo $TOKEN | python -c 'import json,sys;print json.load(sys.stdin)["Credentials"]["AccessKeyId"]' 2> /dev/null)" >> $BASH_ENV
+      echo "export AWS_SECRET_ACCESS_KEY=$(echo $TOKEN | python -c 'import json,sys;print json.load(sys.stdin)["Credentials"]["SecretAccessKey"]' 2> /dev/null)" >> $BASH_ENV
+      echo "export AWS_SESSION_TOKEN=$(echo $TOKEN | python -c 'import json,sys;print json.load(sys.stdin)["Credentials"]["SessionToken"]' 2> /dev/null)" >> $BASH_ENV
+      echo "export AWS_DEFAULT_REGION=eu-west-2" >> $BASH_ENV
+  - &ecr_login
+    name: ECR login
+    command: $(aws ecr get-login --no-include-email --region eu-west-2)
+  - &build_and_release
+    name: Build and release
+    command: |
+      source $BASH_ENV
+      docker build --build-arg CIRCLE_SHA1=${CIRCLE_SHA1} -t event-notifier:${CIRCLE_SHA1} . -f Dockerfile_event-notifier
+      docker run \
+        -e S3_BUCKET=$S3_BUCKET \
+        -e CIRCLE_SHA1=${CIRCLE_SHA1} \
+        -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION \
+        -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+        -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+        -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
+        event-notifier:${CIRCLE_SHA1}
+  - &cleanup
+    name: Cleanup
+    command: |
+      rm -rf .ssh
+version: 2.1
+jobs:
+  build:
+    machine:
+      image: circleci/classic:edge
+    steps:
+      - checkout
+      - run: *prepare_ssh_key
+      - run: *assume_dev_admin_role
+      - run: *ecr_login
+      - run: *build_and_release
+      - run: *cleanup
+
+workflows:
+  coverage:
+    jobs:
+      - build

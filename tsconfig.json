@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "module": "commonjs",
+    "rootDir": "./src", // needed to preserve dir structure
+    "outDir": "dist",
+    "experimentalDecorators": true,
+    "allowJs": true,
+    "sourceMap": false,
+    "noUnusedLocals": true,
+    "emitDecoratorMetadata": true
+  },
+  "include": [
+    "src/config.js", "src/knexfile.js", "src/app.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

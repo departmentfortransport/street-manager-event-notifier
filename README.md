@@ -3,7 +3,6 @@
 ## Description
 Lambda function that handles the sending of notificiations from Street Manager via SNS.
 
-
 ## Run locally
 ### Install AWS SAM
 `brew tap aws/tap`

@@ -1,0 +1,34 @@
+{
+  "name": "street-manager-event-notifier",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "build": "npm run clean && tsc",
+    "clean": "rimraf dist",
+    "lint": "tslint --project tslint.json --exclude 'prod_node_modules/**' --exclude 'node_modules/**'",
+    "test": "TZ=UTC npm run lint && nyc npm run test-unit",
+    "test-unit": "TZ=UTC mocha 'tests/unit/**/*.ts' --require ts-node/register"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "inversify": "^5.0.1",
+    "knex": "^0.20.15",
+    "pg": "^7.18.2",
+    "reflect-metadata": "^0.1.13"
+  },
+  "devDependencies": {
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^13.11.1",
+    "aws-sdk": "^2.656.0",
+    "chai": "^4.2.0",
+    "mocha": "^7.1.1",
+    "nyc": "^15.0.1",
+    "rimraf": "^3.0.2",
+    "sinon": "^9.0.2",
+    "ts-mockito": "^2.5.0",
+    "ts-node": "^8.8.2",
+    "tslint": "^6.1.1",
+    "typescript": "^3.8.3"
+  }
+}
