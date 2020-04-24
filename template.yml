@@ -15,6 +15,10 @@ Resources:
       Description: A Lambda function that logs the payload of messages sent to an associated SQS queue.
       Runtime: nodejs10.x
       Handler: dist/app.handler
+      Environment:
+        Variables:
+          PGUSER:
+          PGPASSWORD:
       Events:
         SQSQueueEvent:
           Type: SQS

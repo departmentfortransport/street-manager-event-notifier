@@ -8,7 +8,8 @@
     "clean": "rimraf dist",
     "lint": "tslint --project tslint.json --exclude 'prod_node_modules/**' --exclude 'node_modules/**'",
     "test": "TZ=UTC npm run lint && nyc npm run test-unit",
-    "test-unit": "TZ=UTC mocha 'tests/unit/**/*.ts' --require ts-node/register"
+    "test-unit": "TZ=UTC mocha 'tests/unit/**/*.ts' --require ts-node/register",
+    "local": "npm run build && sam local invoke --docker-network host"
   },
   "license": "MIT",
   "dependencies": {
