@@ -1,0 +1,30 @@
+# This is the SAM template that represents the architecture of your serverless application
+# ** Used for running this lambda locally **
+# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-template-basics.html
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  eventNotifier
+Transform:
+- AWS::Serverless-2016-10-31
+Resources:
+  SimpleQueue:
+    Type: AWS::SQS::Queue
+  EventNotifier:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: A Lambda function that logs the payload of messages sent to an associated SQS queue.
+      Runtime: nodejs10.x
+      Handler: dist/app.handler
+      Environment:
+        Variables:
+          PGUSER:
+          PGPASSWORD:
+      Events:
+        SQSQueueEvent:
+          Type: SQS
+          Properties:
+            Queue: Fn::GetAtt SimpleQueue.Arn
+      MemorySize: 128
+      Timeout: 25 # Chosen to be less than the default SQS Visibility Timeout of 30 seconds
+      Policies:
+        - AWSLambdaBasicExecutionRole

@@ -1,0 +1,5 @@
+password: PGPASSWORD
+connection.password
+should use password from config if provided
+password = 'knexpw'
+should called RDS Service to fetch token if no password provided

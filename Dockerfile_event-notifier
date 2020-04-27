@@ -1,0 +1,59 @@
+FROM 454455319752.dkr.ecr.eu-west-2.amazonaws.com/nodejs:alpine-3.11_nodejs-12 AS base
+RUN apk upgrade --no-cache && \
+    mkdir -p /opt/app/dft-street-manager-event-notifier
+
+WORKDIR /opt/app/dft-street-manager-event-notifier
+
+ENTRYPOINT ["/sbin/tini", "--"]
+
+COPY package.json .
+
+COPY package-lock.json .
+
+FROM base AS dependencies
+
+RUN apk add --no-cache \
+      g++ \
+      git \
+      make \
+      openssh-client \
+      python \
+      zip
+
+COPY . .
+
+RUN mkdir ~/.ssh && \
+    ssh-keyscan github.com > ~/.ssh/known_hosts && \
+    cp .ssh/id_rsa ~/.ssh/id_rsa
+
+RUN npm set progress=false && \
+    npm config set depth 0 && \
+    npm install --only=production && \
+    cp -R node_modules prod_node_modules && \
+    npm install && \
+    npm run build && \
+    npm run test
+
+FROM alpine AS event-notifier
+
+ARG CIRCLE_SHA1
+
+RUN apk upgrade --no-cache && \
+    adduser -D nodejs && \
+    mkdir -p /opt/app/dft-street-manager-event-notifier && \
+    apk add --no-cache python3 zip && \
+    pip3 install --upgrade pip && \
+    pip3 install awscli
+
+WORKDIR /opt/app/dft-street-manager-event-notifier
+
+COPY --from=dependencies /opt/app/dft-street-manager-event-notifier/dist /opt/app/dft-street-manager-event-notifier/dist
+COPY --from=dependencies /opt/app/dft-street-manager-event-notifier/prod_node_modules /opt/app/dft-street-manager-event-notifier/node_modules
+
+RUN chown nodejs:nodejs -R /opt/app/dft-street-manager-event-notifier
+
+USER nodejs
+
+RUN zip -r ${CIRCLE_SHA1}.zip dist node_modules
+
+CMD aws s3 cp /opt/app/dft-street-manager-event-notifier/${CIRCLE_SHA1}.zip s3://${S3_BUCKET}

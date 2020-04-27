@@ -1,0 +1,15 @@
+.DS_Store
+.ssh
+
+coverage
+dist
+tmp
+
+# Dependency directories
+node_modules
+
+# Optional npm cache directory
+.npm
+
+# nyc test coverage
+.nyc_output
