@@ -1,8 +1,8 @@
 import 'mocha'
-import DBService from '../../src/services/dbService'
+import DBService from '../../../src/services/dbService'
 import * as Knex from 'knex'
 import { mock, instance, when } from 'ts-mockito'
-import RDSService from '../../src/services/aws/rdsService'
+import RDSService from '../../../src/services/aws/rdsService'
 import { assert } from 'chai'
 
 describe('dbService', () => {

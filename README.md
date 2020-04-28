@@ -10,9 +10,12 @@ Lambda function that handles the sending of notificiations from Street Manager v
 
 ### 2. Environment variables
 Set `PGUSER` and `PGPASSWORD` variables for local DB
+Set Topic ARN variables for sns: `WORKSTARTTOPICARN` & `WORKSTOPTOPICARN`
 
 `export PGUSER='<postgres local user>'`
 `export PGUSER='<postgres local password>'`
+`export WORKSTARTTOPICARN='<arn of work start topic - can use EventNotifierTestTopic arn found in aws console>'`
+`export WORKSTOPTOPICARN='<arn of work stop topic - can use EventNotifierTestTopic arn found in aws console>'`
 
 (Add to bash profile and skip this step next time)
 

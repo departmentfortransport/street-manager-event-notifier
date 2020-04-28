@@ -1,9 +1,9 @@
 import 'mocha'
 import * as sinon from 'sinon'
-import RDSService from '../../../src/services/aws/rdsService'
+import RDSService from '../../../../src/services/aws/rdsService'
 import { RDS } from 'aws-sdk'
 import { assert } from 'chai'
-import Logger from '../../../src/utils/logger'
+import Logger from '../../../../src/utils/logger'
 import { mock} from 'ts-mockito'
 
 describe('rdsService', () => {
