@@ -4,7 +4,7 @@ import SNSService from '../../../../src/services/aws/snsService'
 import { SNS } from 'aws-sdk'
 import { assert } from 'chai'
 import Logger from '../../../../src/utils/logger'
-import { mock} from 'ts-mockito'
+import { mock } from 'ts-mockito'
 
 describe('snsService', () => {
 
@@ -40,6 +40,20 @@ describe('snsService', () => {
 
       assert.equal(input.Message, message)
       assert.equal(input.TopicArn, arn)
+    })
+
+    it('should return error from SNS', async () => {
+      publish.yields(new Error('error'))
+
+      const message = JSON.stringify({test: 'message'})
+      const arn = 'topicArn'
+
+      try {
+        await service.publishMessage(message, arn)
+        assert.fail()
+      } catch (err) {
+        assert.equal(err.message, 'error')
+      }
     })
   })
 })

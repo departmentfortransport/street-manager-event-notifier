@@ -19,6 +19,7 @@
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.51",
     "@types/mocha": "^7.0.2",
     "@types/node": "^13.11.1",
     "aws-sdk": "^2.656.0",

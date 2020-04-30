@@ -9,15 +9,12 @@ Lambda function that handles the sending of notificiations from Street Manager v
 `brew install aws-sam-cli`
 
 ### 2. Environment variables
-Set `PGUSER` and `PGPASSWORD` variables for local DB
-Set Topic ARN variables for sns: `WORKSTARTTOPICARN` & `WORKSTOPTOPICARN`
+Ensure you have the following environment variables from Keybase added to your .zshrc/.bash_profile:
 
-`export PGUSER='<postgres local user>'`
-`export PGUSER='<postgres local password>'`
-`export WORKSTARTTOPICARN='<arn of work start topic - can use EventNotifierTestTopic arn found in aws console>'`
-`export WORKSTOPTOPICARN='<arn of work stop topic - can use EventNotifierTestTopic arn found in aws console>'`
-
-(Add to bash profile and skip this step next time)
+`PGUSER`
+`PGPASSWORD`
+`WORKSTARTTOPICARN`
+`WORKSTOPTOPICARN`
 
 ### 3. Build
 Compile typescript to javascript - output to /dist folder
