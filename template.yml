@@ -1,5 +1,5 @@
-# This is the SAM template that represents the architecture of your serverless application
 # ** Used for running this lambda locally **
+# This is the SAM template that represents the architecture of your serverless application
 # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-template-basics.html
 AWSTemplateFormatVersion: 2010-09-09
 Description: >-
@@ -19,6 +19,8 @@ Resources:
         Variables:
           PGUSER:
           PGPASSWORD:
+          WORKSTARTTOPICARN:
+          WORKSTOPTOPICARN:
       Events:
         SQSQueueEvent:
           Type: SQS
