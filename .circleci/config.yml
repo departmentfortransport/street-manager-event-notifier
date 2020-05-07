@@ -67,10 +67,10 @@ aliases:
       mv /tmp/lambda/${CIRCLE_SHA1}.zip /tmp/lambda/${CIRCLE_TAG}.zip
       aws s3 cp /tmp/lambda/${CIRCLE_TAG}.zip s3://${DEV_BUCKET}
   - &push_preprod_bucket
-    name: Push dev bucket
+    name: Push preprod bucket
     command: aws s3 cp /tmp/lambda/${CIRCLE_TAG}.zip s3://${PREPROD_BUCKET}
   - &push_prod_bucket
-    name: Push dev bucket
+    name: Push prod bucket
     command: aws s3 cp /tmp/lambda/${CIRCLE_TAG}.zip s3://${PROD_BUCKET}
   - &cleanup
     name: Cleanup
@@ -97,10 +97,11 @@ aliases:
           git config --global user.email streetmanagerops@kainos.com
           git clone git@github.com:departmentfortransport/street-manager-$NAMESPACE.git
           cd street-manager-$NAMESPACE
-          /usr/local/bin/yq w -i config.yaml apps.event-notifier.tag $CIRCLE_SHA1
+          /usr/local/bin/yq w -i config.yaml apps.event_notifier.tag $CIRCLE_SHA1
           git diff --exit-code
           git commit -am \"Bumping event-notifier version.\"
           git push -u origin
+        "
 version: 2.1
 jobs:
   build:
