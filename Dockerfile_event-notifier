@@ -32,18 +32,17 @@ RUN npm set progress=false && \
     cp -R node_modules prod_node_modules && \
     npm install && \
     npm run build && \
-    npm run test
+    npm run test && \
+    npm audit
 
-FROM alpine AS event-notifier
+FROM base AS event-notifier
 
 ARG CIRCLE_SHA1
 
 RUN apk upgrade --no-cache && \
-    adduser -D nodejs && \
     mkdir -p /opt/app/dft-street-manager-event-notifier && \
     apk add --no-cache python3 zip && \
-    pip3 install --upgrade pip && \
-    pip3 install awscli
+    pip3 install --upgrade pip
 
 WORKDIR /opt/app/dft-street-manager-event-notifier
 
@@ -52,8 +51,4 @@ COPY --from=dependencies /opt/app/dft-street-manager-event-notifier/prod_node_mo
 
 RUN chown nodejs:nodejs -R /opt/app/dft-street-manager-event-notifier
 
-USER nodejs
-
 RUN zip -r ${CIRCLE_SHA1}.zip dist node_modules
-
-CMD aws s3 cp /opt/app/dft-street-manager-event-notifier/${CIRCLE_SHA1}.zip s3://${S3_BUCKET}
