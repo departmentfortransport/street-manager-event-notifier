@@ -97,10 +97,11 @@ aliases:
           git config --global user.email streetmanagerops@kainos.com
           git clone git@github.com:departmentfortransport/street-manager-$NAMESPACE.git
           cd street-manager-$NAMESPACE
-          /usr/local/bin/yq w -i config.yaml apps.event-notifier.tag $CIRCLE_SHA1
+          /usr/local/bin/yq w -i config.yaml apps.event_notifier.tag $CIRCLE_SHA1
           git diff --exit-code
           git commit -am \"Bumping event-notifier version.\"
           git push -u origin
+        "
 version: 2.1
 jobs:
   build:
