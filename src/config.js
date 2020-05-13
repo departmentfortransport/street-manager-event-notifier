@@ -10,7 +10,7 @@ module.exports = {
   PGPORT: process.env.PGPORT || 5432,
   PGMINPOOLSIZE: Number(process.env.PGMINPOOLSIZE) || 5,
   PGMAXPOOLSIZE: Number(process.env.PGMAXPOOLSIZE) || 10,
-  PGSSL: process.env.PGSSL || false,
+  PGSSL: (process.env.PGSSL === true || process.env.PGSSL === 'true') || false,
 
   // SNS
   WORKSTARTTOPICARN: process.env.WORKSTARTTOPICARN,
