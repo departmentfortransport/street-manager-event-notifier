@@ -2,11 +2,8 @@ import 'reflect-metadata'
 import { injectable, inject } from 'inversify'
 import TYPES from '../types'
 import ObjectMessageService from '../models/objectMessageService'
-import Knex = require('knex')
-import { SQSRecord } from 'aws-lambda'
 import PermitDao from '../daos/permitDao'
-import { PermitData } from '../models/permitData'
-import { EventNotifierSQSMessage, EventNotifierSNSMessage, EventTypeNotificationEnum } from 'street-manager-data'
+import { EventNotifierSQSMessage, EventNotifierSNSMessage, EventTypeNotificationEnum, HighLevelWorkData } from 'street-manager-data'
 import SNSService from './aws/snsService'
 import { SNS } from 'aws-sdk'
 
@@ -81,8 +78,8 @@ export default class PermitObjectMessageService implements ObjectMessageService 
         throw new Error(`The following event type is not valid: [${eventType}]`)
     }
   }
-  private async generateWorkData(): Promise<PermitData> {
-    const permit: PermitData =  await this.dao.getPermit('1')
+  private async generateWorkData(): Promise<HighLevelWorkData> {
+    const permit: HighLevelWorkData =  await this.dao.getPermit('1')
 
     return permit
   }

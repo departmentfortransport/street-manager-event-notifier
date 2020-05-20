@@ -1,8 +1,7 @@
 import * as Knex from 'knex'
 import { inject, injectable } from 'inversify'
 import TYPES from '../types'
-import { PermitData } from '../models/permitData'
-import { KnexPostgis } from 'knex-postgis'
+import { HighLevelWorkData } from 'street-manager-data'
 
 @injectable()
 export default class PermitDao {
@@ -38,7 +37,7 @@ export default class PermitDao {
     @inject(TYPES.KnexRead) private knex: Knex
   ) {}
 
-  public async getPermit(permitReferenceNumber: string): Promise<PermitData> {
+  public async getPermit(permitReferenceNumber: string): Promise<HighLevelWorkData> {
     const query: Knex.QueryBuilder = this.preparePermitsQuery(permitReferenceNumber)
       .select(this.PERMIT_COLUMNS)
       .limit(1)

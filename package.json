@@ -19,7 +19,7 @@
     "knex-postgis": "^0.12.0",
     "pg": "^7.18.2",
     "reflect-metadata": "^0.1.13",
-    "street-manager-data": "git+ssh://git@github.com:departmentfortransport/street-manager-data#c67f934b8aa1e4997461ce3066daa7c80fc94aea"
+    "street-manager-data": "git+ssh://git@github.com:departmentfortransport/street-manager-data#ec9daa0d903ea4089bdcace675cc1812c02427f0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.51",

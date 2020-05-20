@@ -2,7 +2,6 @@ import 'reflect-metadata'
 import { injectable, inject } from 'inversify'
 import TYPES from '../types'
 import ObjectMessageService from '../models/objectMessageService'
-import { ObjectMessageType } from '../models/objectMessageType'
 import PermitObjectMessageService from './permitObjectMessageService'
 import { ObjectTypeNotificationEnum } from 'street-manager-data'
 
