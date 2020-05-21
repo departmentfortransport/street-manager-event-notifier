@@ -7,6 +7,9 @@ import { EventNotifierSQSMessage, EventNotifierSNSMessage, EventTypeNotification
 import SNSService from './aws/snsService'
 import { SNS } from 'aws-sdk'
 import Knex = require('knex')
+import HighLevelWorkDataMapper from '../mappers/highLevelWorkDataMapper'
+import { HighLevelWorkDataData } from '../models/highLevelWorkDataData'
+import * as postgis from 'knex-postgis'
 
 @injectable()
 export default class PermitObjectMessageService implements ObjectMessageService {
@@ -15,7 +18,8 @@ export default class PermitObjectMessageService implements ObjectMessageService 
     @inject(TYPES.PermitDao) private dao: PermitDao,
     @inject(TYPES.SNSService) private snsService: SNSService,
     @inject(TYPES.WorkStartTopic) private workStartTopic: string,
-    @inject(TYPES.WorkStopTopic) private workStopTopic: string) {}
+    @inject(TYPES.WorkStopTopic) private workStopTopic: string,
+    @inject(TYPES.HighLevelWorkDataMapper) private mapper: HighLevelWorkDataMapper) {}
 
   public async sendMessageToSNS(sqsMessage: EventNotifierSQSMessage, knex: Knex): Promise<void> {
     try {
@@ -35,10 +39,12 @@ export default class PermitObjectMessageService implements ObjectMessageService 
       object_reference: sqsMessage.object_reference,
       version: 1
     }
+    console.log('Nat2: ', eventNotifierSNSMessage.work_data)
+
     const params: SNS.PublishInput = {
       Message: JSON.stringify(eventNotifierSNSMessage),
       TopicArn: this.getTopic(sqsMessage.event_type),
-      MessageAttributes: this.generateMessageAttributes(eventNotifierSNSMessage.work_data.usrn.toString(), eventNotifierSNSMessage.work_data.highway_authority_swa_code, eventNotifierSNSMessage.work_data.promoter_swa_code, eventNotifierSNSMessage.work_data.area_name, eventNotifierSNSMessage.work_data.activity_type_id.toString())
+      MessageAttributes: this.generateMessageAttributes(eventNotifierSNSMessage.work_data.usrn.toString(), eventNotifierSNSMessage.work_data.highway_authority_swa_code, eventNotifierSNSMessage.work_data.promoter_swa_code, eventNotifierSNSMessage.work_data.area_name, eventNotifierSNSMessage.work_data.activity_type)
     }
 
     await this.snsService.publishMessage(params)
@@ -80,10 +86,9 @@ export default class PermitObjectMessageService implements ObjectMessageService 
     }
   }
   private async generateWorkData(permitReferenceNumber: string, knex: Knex): Promise<HighLevelWorkData> {
-    console.log(' NAT: ', await this.dao.getPermit(permitReferenceNumber, knex))
-    const permit: HighLevelWorkData =  await this.dao.getPermit(permitReferenceNumber, knex)
-
-    return permit
+    const dbData: HighLevelWorkDataData =  await this.dao.getPermit(permitReferenceNumber, knex)
+    console.log('Nat1: ', dbData)
+    return this.mapper.mapDataToInfo(dbData)
   }
 
 }

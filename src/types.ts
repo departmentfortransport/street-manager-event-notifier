@@ -20,7 +20,10 @@ const TYPES = {
   PermitObjectMessageService: Symbol.for('PermitObjectMessageService'),
 
   // DAOs
-  PermitDao: Symbol.for('PermitDao')
+  PermitDao: Symbol.for('PermitDao'),
+
+  // Mappers
+  HighLevelWorkDataMapper: Symbol.for('HighLevelWorkDataMapper')
 }
 
 export default TYPES

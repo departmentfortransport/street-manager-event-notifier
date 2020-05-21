@@ -11,13 +11,20 @@ import * as Knex from 'knex'
 import KnexConfig from './knexfile'
 import ObjectMessageServiceDelegator from './services/objectMessageServiceDelegator'
 import PermitObjectMessageService from './services/permitObjectMessageService'
+import HighLevelWorkDataMapper from './mappers/highLevelWorkDataMapper'
 import PermitDao from './daos/permitDao'
+import * as postgis from 'knex-postgis'
 
 const iocContainer = new Container()
 
 // Database
 iocContainer.bind<Knex.Config>(TYPES.Knex).toConstantValue(KnexConfig.works as Knex.Config)
 iocContainer.bind<DBService>(TYPES.DBService).to(DBService).inSingletonScope()
+
+const knexRead: Knex = Knex(KnexConfig.worksRead)
+
+iocContainer.bind<Knex>(TYPES.KnexRead).toConstantValue(knexRead)
+iocContainer.bind<postgis.KnexPostgis>(TYPES.Postgis).toConstantValue(postgis(knexRead))
 
 // Services
 iocContainer.bind<ObjectMessageServiceDelegator>(TYPES.ObjectMessageServiceDelegator).to(ObjectMessageServiceDelegator).inSingletonScope()
@@ -44,5 +51,8 @@ iocContainer.bind<string>(TYPES.WorkStopTopic).toConstantValue(config.WORKSTOPTO
 
 // Utils
 iocContainer.bind<Logger>(TYPES.Logger).to(Logger)
+
+// Mappers
+iocContainer.bind<HighLevelWorkDataMapper>(TYPES.HighLevelWorkDataMapper).to(HighLevelWorkDataMapper)
 
 export default iocContainer
