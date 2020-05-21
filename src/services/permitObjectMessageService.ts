@@ -6,6 +6,7 @@ import PermitDao from '../daos/permitDao'
 import { EventNotifierSQSMessage, EventNotifierSNSMessage, EventTypeNotificationEnum, HighLevelWorkData } from 'street-manager-data'
 import SNSService from './aws/snsService'
 import { SNS } from 'aws-sdk'
+import Knex = require('knex')
 
 @injectable()
 export default class PermitObjectMessageService implements ObjectMessageService {
@@ -16,19 +17,19 @@ export default class PermitObjectMessageService implements ObjectMessageService 
     @inject(TYPES.WorkStartTopic) private workStartTopic: string,
     @inject(TYPES.WorkStopTopic) private workStopTopic: string) {}
 
-  public async sendMessageToSNS(sqsMessage: EventNotifierSQSMessage, messageId: string): Promise<void> {
+  public async sendMessageToSNS(sqsMessage: EventNotifierSQSMessage, knex: Knex): Promise<void> {
     try {
-      this.generateSNSMessage(sqsMessage, messageId)
+      await this.generateSNSMessage(sqsMessage, knex)
     } catch (err) {
       return Promise.reject(err)
     }
   }
 
-  private async generateSNSMessage(sqsMessage: EventNotifierSQSMessage, messageId: string) {
+  private async generateSNSMessage(sqsMessage: EventNotifierSQSMessage, knex: Knex) {
     const eventNotifierSNSMessage: EventNotifierSNSMessage = {
       event_reference: sqsMessage.event_reference,
       event_type: sqsMessage.event_type,
-      work_data: await this.generateWorkData(),
+      work_data: await this.generateWorkData(sqsMessage.object_reference, knex),
       event_time: sqsMessage.event_time,
       object_type: sqsMessage.object_type,
       object_reference: sqsMessage.object_reference,
@@ -78,8 +79,9 @@ export default class PermitObjectMessageService implements ObjectMessageService 
         throw new Error(`The following event type is not valid: [${eventType}]`)
     }
   }
-  private async generateWorkData(): Promise<HighLevelWorkData> {
-    const permit: HighLevelWorkData =  await this.dao.getPermit('1')
+  private async generateWorkData(permitReferenceNumber: string, knex: Knex): Promise<HighLevelWorkData> {
+    console.log(' NAT: ', await this.dao.getPermit(permitReferenceNumber, knex))
+    const permit: HighLevelWorkData =  await this.dao.getPermit(permitReferenceNumber, knex)
 
     return permit
   }
