@@ -1,7 +1,6 @@
 import TYPES from './types'
 import iocContainer from './ioc'
 import DBService from './services/dbService'
-import * as Knex from 'knex'
 import Logger from './utils/logger'
 import { SQSHandler, SQSEvent, SQSRecord } from 'aws-lambda'
 import { EventNotifierSQSMessage } from 'street-manager-data'
@@ -14,14 +13,13 @@ export const handler: SQSHandler = async(event: SQSEvent) => {
   const sqsRecord: SQSRecord = event.Records[0]
   const sqsMessage: EventNotifierSQSMessage = JSON.parse(sqsRecord.body)
   logger.log(`Received message: ${JSON.stringify(sqsRecord)}`)
-  const knex: Knex = await iocContainer.get<DBService>(TYPES.DBService).connect()
 
   try {
-    await objectMessageServiceDelegator.getObjectMessageService(sqsMessage.object_type).sendMessageToSNS(sqsMessage, knex)
+    await objectMessageServiceDelegator.getObjectMessageService(sqsMessage.object_type).sendMessageToSNS(sqsMessage)
   } catch (err) {
     throw new Error(err)
   } finally {
-    await knex.destroy()
+    await iocContainer.get<DBService>(TYPES.DBService).destroy()
   }
 
   return

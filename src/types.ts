@@ -3,7 +3,6 @@ const TYPES = {
   Logger: Symbol.for('Logger'),
   Knex: Symbol.for('Knex'),
   KnexRead: Symbol.for('KnexRead'),
-  KnexWrite: Symbol.for('KnexWrite'),
   Postgis: Symbol.for('Postgis'),
 
   // AWS

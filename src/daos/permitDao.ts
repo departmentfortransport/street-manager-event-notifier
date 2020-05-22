@@ -1,6 +1,8 @@
 import * as Knex from 'knex'
 import { HighLevelWorkDataData } from '../models/highLevelWorkDataData'
-import { injectable } from 'inversify'
+import { injectable, inject } from 'inversify'
+import TYPES from '../types'
+import DBService from '../services/dbService'
 
 @injectable()
 export default class PermitDao {
@@ -28,7 +30,13 @@ export default class PermitDao {
     'work.usrn'
   ]
 
-  public async getPermit(permitReferenceNumber: string, knex: Knex): Promise<HighLevelWorkDataData> {
+  public constructor (
+    @inject(TYPES.DBService) private db: DBService
+  ) {}
+
+  public async getPermit(permitReferenceNumber: string): Promise<HighLevelWorkDataData> {
+    const knex: Knex = await this.db.knex()
+
     const query: Knex.QueryBuilder = this.preparePermitsQuery(permitReferenceNumber, knex)
       .select(this.PERMIT_COLUMNS)
       .limit(1)

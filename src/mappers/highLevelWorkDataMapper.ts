@@ -1,14 +1,21 @@
-import { injectable } from 'inversify'
+import { injectable, inject } from 'inversify'
 import { HighLevelWorkDataData } from '../models/highLevelWorkDataData'
 import { HighLevelWorkData, RefWorkStatus, RefWorkCategory, RefTrafficManagementType, RefActivityType } from 'street-manager-data'
 import { buildDateString } from '../helpers/dateHelper'
 import { mapCoordinatesToCSV } from '../helpers/coordinatesHelper'
 import { worksCategoryFilter, trafficManagementTypeFilter, worksStatusFilter, asOptionalDateTime, asOptionalTime, booleanFilter } from '../filters'
+import TYPES from '../types'
+import DBService from '../services/dbService'
 
 @injectable()
 export default class HighLevelWorkDataMapper {
-  public mapDataToInfo(data: HighLevelWorkDataData): HighLevelWorkData {
-    console.log('Nat3: ')
+  public constructor (
+    @inject(TYPES.DBService) private db: DBService
+  ) {}
+
+  public async mapDataToInfo(data: HighLevelWorkDataData): Promise<HighLevelWorkData> {
+    console.log('Nat3: ', data.permit_coordinates)
+    console.log('Nat4: ', this.db.postgis().asGeoJSON(data.permit_coordinates))
 
     const x: HighLevelWorkData = {
       work_reference_number: data.work_reference_number,
@@ -16,7 +23,7 @@ export default class HighLevelWorkDataMapper {
       promoter_swa_code: data.promoter_organisation_reference,
       promoter_organisation: data.promoter_organisation_name,
       highway_authority: data.ha_organisation_name,
-      works_location_coordinates: mapCoordinatesToCSV(data.permit_coordinates),
+      works_location_coordinates: mapCoordinatesToCSV(this.db.postgis().asGeoJSON(data.permit_coordinates)),
       street_name: data.street_name,
       area_name: data.area_name,
       work_category: worksCategoryFilter(data.work_category_id),

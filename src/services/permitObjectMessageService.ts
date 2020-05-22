@@ -6,10 +6,8 @@ import PermitDao from '../daos/permitDao'
 import { EventNotifierSQSMessage, EventNotifierSNSMessage, EventTypeNotificationEnum, HighLevelWorkData } from 'street-manager-data'
 import SNSService from './aws/snsService'
 import { SNS } from 'aws-sdk'
-import Knex = require('knex')
 import HighLevelWorkDataMapper from '../mappers/highLevelWorkDataMapper'
 import { HighLevelWorkDataData } from '../models/highLevelWorkDataData'
-import * as postgis from 'knex-postgis'
 
 @injectable()
 export default class PermitObjectMessageService implements ObjectMessageService {
@@ -21,19 +19,19 @@ export default class PermitObjectMessageService implements ObjectMessageService 
     @inject(TYPES.WorkStopTopic) private workStopTopic: string,
     @inject(TYPES.HighLevelWorkDataMapper) private mapper: HighLevelWorkDataMapper) {}
 
-  public async sendMessageToSNS(sqsMessage: EventNotifierSQSMessage, knex: Knex): Promise<void> {
+  public async sendMessageToSNS(sqsMessage: EventNotifierSQSMessage): Promise<void> {
     try {
-      await this.generateSNSMessage(sqsMessage, knex)
+      await this.generateSNSMessage(sqsMessage)
     } catch (err) {
       return Promise.reject(err)
     }
   }
 
-  private async generateSNSMessage(sqsMessage: EventNotifierSQSMessage, knex: Knex) {
+  private async generateSNSMessage(sqsMessage: EventNotifierSQSMessage) {
     const eventNotifierSNSMessage: EventNotifierSNSMessage = {
       event_reference: sqsMessage.event_reference,
       event_type: sqsMessage.event_type,
-      work_data: await this.generateWorkData(sqsMessage.object_reference, knex),
+      work_data: await this.generateWorkData(sqsMessage.object_reference),
       event_time: sqsMessage.event_time,
       object_type: sqsMessage.object_type,
       object_reference: sqsMessage.object_reference,
@@ -85,10 +83,10 @@ export default class PermitObjectMessageService implements ObjectMessageService 
         throw new Error(`The following event type is not valid: [${eventType}]`)
     }
   }
-  private async generateWorkData(permitReferenceNumber: string, knex: Knex): Promise<HighLevelWorkData> {
-    const dbData: HighLevelWorkDataData =  await this.dao.getPermit(permitReferenceNumber, knex)
+  private async generateWorkData(permitReferenceNumber: string): Promise<HighLevelWorkData> {
+    const dbData: HighLevelWorkDataData =  await this.dao.getPermit(permitReferenceNumber)
     console.log('Nat1: ', dbData)
-    return this.mapper.mapDataToInfo(dbData)
+    return await this.mapper.mapDataToInfo(dbData)
   }
 
 }
