@@ -6,7 +6,6 @@ import PermitDao from '../daos/permitDao'
 import { EventNotifierSQSMessage, EventNotifierSNSMessage, EventTypeNotificationEnum, HighLevelWorkData } from 'street-manager-data'
 import SNSService from './aws/snsService'
 import { SNS } from 'aws-sdk'
-import * as Knex from 'knex'
 
 @injectable()
 export default class PermitObjectMessageService implements ObjectMessageService {
@@ -17,19 +16,19 @@ export default class PermitObjectMessageService implements ObjectMessageService 
     @inject(TYPES.WorkStartTopic) private workStartTopic: string,
     @inject(TYPES.WorkStopTopic) private workStopTopic: string) {}
 
-  public async sendMessageToSNS(sqsMessage: EventNotifierSQSMessage, messageId: string, knex: Knex): Promise<void> {
+  public async sendMessageToSNS(sqsMessage: EventNotifierSQSMessage, messageId: string): Promise<void> {
     try {
-      await this.generateSNSMessage(sqsMessage, knex)
+      await this.generateSNSMessage(sqsMessage)
     } catch (err) {
       return Promise.reject(err)
     }
   }
 
-  private async generateSNSMessage(sqsMessage: EventNotifierSQSMessage, knex: Knex) {
+  private async generateSNSMessage(sqsMessage: EventNotifierSQSMessage) {
     const eventNotifierSNSMessage: EventNotifierSNSMessage = {
       event_reference: sqsMessage.event_reference,
       event_type: sqsMessage.event_type,
-      work_data: await this.generateWorkData(knex),
+      work_data: await this.generateWorkData(),
       event_time: sqsMessage.event_time,
       object_type: sqsMessage.object_type,
       object_reference: sqsMessage.object_reference,
@@ -79,8 +78,8 @@ export default class PermitObjectMessageService implements ObjectMessageService 
         throw new Error(`The following event type is not valid: [${eventType}]`)
     }
   }
-  private async generateWorkData(knex: Knex): Promise<HighLevelWorkData> {
-    const permit: HighLevelWorkData =  await this.dao.getPermit('1', knex)
+  private async generateWorkData(): Promise<HighLevelWorkData> {
+    const permit: HighLevelWorkData =  await this.dao.getPermit('1')
 
     return permit
   }

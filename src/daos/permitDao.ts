@@ -1,6 +1,8 @@
 import * as Knex from 'knex'
-import { injectable } from 'inversify'
+import { injectable, inject } from 'inversify'
 import { HighLevelWorkData } from 'street-manager-data'
+import TYPES from '../types'
+import DBService from '../services/dbService'
 
 @injectable()
 export default class PermitDao {
@@ -32,16 +34,12 @@ export default class PermitDao {
     'permit.highway_authority_swa_code'
   ]
 
-  public async getPermit(permitReferenceNumber: string, knex: Knex): Promise<HighLevelWorkData> {
-    console.log('getting permit')
-    console.log(knex['connection'])
-    console.log(permitReferenceNumber)
-    try {
-      console.log(await knex('permit').select('permit_reference_number').limit(1))
+  public constructor (
+    @inject(TYPES.DBService) private db: DBService
+  ) {}
 
-    } catch (error) {
-      console.log(error)
-    }
+  public async getPermit(permitReferenceNumber: string): Promise<HighLevelWorkData> {
+    const knex: Knex = await this.db.knex()
 
     const query: Knex.QueryBuilder = this.preparePermitsQuery(permitReferenceNumber, knex)
       .select(this.PERMIT_COLUMNS)
