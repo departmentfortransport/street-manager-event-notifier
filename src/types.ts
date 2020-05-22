@@ -2,7 +2,6 @@ const TYPES = {
   // Utils
   Logger: Symbol.for('Logger'),
   Knex: Symbol.for('Knex'),
-  KnexRead: Symbol.for('KnexRead'),
   Postgis: Symbol.for('Postgis'),
 
   // AWS
@@ -22,7 +21,9 @@ const TYPES = {
   PermitDao: Symbol.for('PermitDao'),
 
   // Mappers
-  HighLevelWorkDataMapper: Symbol.for('HighLevelWorkDataMapper')
+  WorkDataMapper: Symbol.for('WorkDataMapper'),
+  EventNotifierSNSMessageMapper: Symbol.for('EventNotifierSNSMessageMapper'),
+  SNSPublishInputMapper: Symbol.for('SNSPublishInputMapper')
 }
 
 export default TYPES

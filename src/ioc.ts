@@ -11,8 +11,10 @@ import * as Knex from 'knex'
 import KnexConfig from './knexfile'
 import ObjectMessageServiceDelegator from './services/objectMessageServiceDelegator'
 import PermitObjectMessageService from './services/permitObjectMessageService'
-import HighLevelWorkDataMapper from './mappers/highLevelWorkDataMapper'
+import WorkDataMapper from './mappers/workDataMapper'
+import EventNotifierSNSMessageMapper from './mappers/eventNotifierSNSMessageMapper'
 import PermitDao from './daos/permitDao'
+import SNSPublishInputMapper from './mappers/snsPublishInputMapper'
 
 const iocContainer = new Container()
 
@@ -47,6 +49,8 @@ iocContainer.bind<string>(TYPES.WorkStopTopic).toConstantValue(config.WORKSTOPTO
 iocContainer.bind<Logger>(TYPES.Logger).to(Logger)
 
 // Mappers
-iocContainer.bind<HighLevelWorkDataMapper>(TYPES.HighLevelWorkDataMapper).to(HighLevelWorkDataMapper)
+iocContainer.bind<WorkDataMapper>(TYPES.WorkDataMapper).to(WorkDataMapper)
+iocContainer.bind<EventNotifierSNSMessageMapper>(TYPES.EventNotifierSNSMessageMapper).to(EventNotifierSNSMessageMapper)
+iocContainer.bind<SNSPublishInputMapper>(TYPES.SNSPublishInputMapper).to(SNSPublishInputMapper)
 
 export default iocContainer
