@@ -10,6 +10,7 @@ export function booleanFilter(value: boolean | string) {
     return 'Not provided'
   }
 }
+
 enum WorksStatusType {
   planned = 'Works planned',
   in_progress = 'Works in progress',
@@ -55,6 +56,29 @@ enum FormattedTrafficManagementType {
 
 export function trafficManagementTypeFilter(trafficManagementTypeId: number) {
   return FormattedTrafficManagementType[trafficManagementTypeId]
+}
+
+enum ActivityType {
+  'Highway improvement works' = 1,
+  'Highway repair and maintenance works' = 2,
+  'Utility asset works' = 3,
+  'Utility repair and maintenance works' = 4,
+  'Diversionary works' = 5,
+  'Disconnection or alteration of supply' = 6,
+  'Permanent reinstatement' = 7,
+  'Remedial works' = 8,
+  'Section 58' = 9,
+  'Section 50' = 10,
+  'Core Sampling' = 11,
+  'Statutory Infrastructure Works' = 12,
+  'Works for Rail Purposes' = 13,
+  'Works for road purposes' = 14,
+  'New service connection' = 15,
+  'Optional permit (no fee) e.g. for traffic management etc' = 16
+}
+
+export function activityTypeFilter(activityTypeId: number) {
+  return ActivityType[activityTypeId]
 }
 
 export function coordinateFilter(value: number): string {

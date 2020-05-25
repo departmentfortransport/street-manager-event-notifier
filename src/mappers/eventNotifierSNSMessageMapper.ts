@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import { injectable, inject } from 'inversify'
 import TYPES from '../types'
 import PermitDao from '../daos/permitDao'
@@ -16,7 +17,7 @@ export default class EventNotifierSNSMessageMapper {
     return {
       event_reference: sqsMessage.event_reference,
       event_type: sqsMessage.event_type,
-      work_data: await this.generateWorkData(sqsMessage.object_reference),
+      object_data: await this.generateWorkData(sqsMessage.object_reference),
       event_time: sqsMessage.event_time,
       object_type: sqsMessage.object_type,
       object_reference: sqsMessage.object_reference,

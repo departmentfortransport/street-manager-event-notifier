@@ -19,6 +19,7 @@ export default class DBService {
     if (!this.knexPostgis) {
       this.knexPostgis = postgis(this.connection)
     }
+
     return this.knexPostgis
   }
 
@@ -31,7 +32,7 @@ export default class DBService {
   }
 
   public async destroy(): Promise<void> {
-    if (!this.connection) {
+    if (this.connection) {
       this.connection.destroy()
     }
   }

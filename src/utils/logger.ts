@@ -8,11 +8,12 @@ export default class Logger {
   }
 
   public logSuccess(object_reference: string, event_reference: string, timeReceived: string, timeSent: string): void {
-    this.log('Message successfully sent to SNS: ' +
-    '- object reference: ' + object_reference +
-    '- event reference: ' + event_reference +
-    '- time message received: ' + timeReceived +
-    '- time message sent: ' + timeSent)
+    this.log(`Message successfully sent to SNS:
+    - object reference: ${object_reference}
+    - event reference: ${event_reference}
+    - time message received: ${timeReceived}
+    - time message sent: ${timeSent}
+   `)
   }
 
   public error(message: string): void {

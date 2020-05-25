@@ -1,10 +1,10 @@
 import * as Knex from 'knex'
-import { WorkData } from '../models/workData'
 import { injectable, inject } from 'inversify'
 import TYPES from '../types'
 import DBService from '../services/dbService'
 import * as postgis from 'knex-postgis'
-
+import { WorkData } from '../models/workData'
+import 'reflect-metadata'
 @injectable()
 export default class PermitDao {
   private readonly PERMIT_TABLE_NAME = 'permit'
@@ -40,10 +40,11 @@ export default class PermitDao {
     const knex: Knex = await this.db.knex()
     const knexPostgis: postgis.KnexPostgis = this.db.postgis()
 
-    this.PERMIT_COLUMNS.push(knexPostgis.asGeoJSON('permit_version.permit_coordinates').as('permit_coordinates'))
-
     const query: Knex.QueryBuilder = this.preparePermitsQuery(permitReferenceNumber, knex)
-      .select(this.PERMIT_COLUMNS)
+      .select([
+        ...this.PERMIT_COLUMNS,
+        knexPostgis.asGeoJSON('permit_version.permit_coordinates').as('permit_coordinates')
+      ])
 
     return await query.first()
   }

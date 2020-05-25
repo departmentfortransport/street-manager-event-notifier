@@ -1,14 +1,15 @@
+import 'reflect-metadata'
 import { injectable } from 'inversify'
 import { WorkData } from '../models/workData'
-import { EventNotifierWorkData, RefWorkStatus, RefWorkCategory, RefTrafficManagementType, RefActivityType } from 'street-manager-data'
+import { EventNotifierWorkData, RefWorkStatus, RefWorkCategory, RefTrafficManagementType } from 'street-manager-data'
 import { buildDateString } from '../helpers/dateHelper'
 import { mapCoordinatesToCSV } from '../helpers/coordinatesHelper'
-import { worksCategoryFilter, trafficManagementTypeFilter, worksStatusFilter, asOptionalDateTime, asOptionalTime, booleanFilter } from '../filters'
+import { worksCategoryFilter, trafficManagementTypeFilter, worksStatusFilter, asOptionalDateTime, asOptionalTime, booleanFilter, activityTypeFilter } from '../filters'
 
 @injectable()
 export default class WorkDataMapper {
 
-  public async mapDataToInfo(data: WorkData): Promise<EventNotifierWorkData> {
+  public mapDataToInfo(data: WorkData): EventNotifierWorkData {
     return {
       work_reference_number: data.work_reference_number,
       permit_reference_number: data.permit_reference_number,
@@ -32,7 +33,7 @@ export default class WorkDataMapper {
       work_category_ref: RefWorkCategory[data.work_category_id],
       traffic_management_type_ref: RefTrafficManagementType[data.traffic_management_type_id],
       work_status_ref: RefWorkStatus[data.work_status_id],
-      activity_type: RefActivityType[data.activity_type_id],
+      activity_type: activityTypeFilter(data.activity_type_id),
       is_ttro_required: booleanFilter(data.is_ttro_required)
     }
   }

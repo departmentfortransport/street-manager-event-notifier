@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import { injectable, inject } from 'inversify'
 import TYPES from '../types'
 import EventNotifierSNSMessageMapper from './eventNotifierSNSMessageMapper'
@@ -17,7 +18,7 @@ export default class SNSPublishInputMapper {
     return {
       Message: JSON.stringify(snsMessage),
       TopicArn: this.getTopic(snsMessage.event_type),
-      MessageAttributes: this.generateMessageAttributes(snsMessage.work_data)
+      MessageAttributes: this.generateMessageAttributes(snsMessage.object_data)
     }
   }
 

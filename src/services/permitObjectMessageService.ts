@@ -19,9 +19,9 @@ export default class PermitObjectMessageService implements ObjectMessageService 
 
   public async sendMessageToSNS(sqsMessage: EventNotifierSQSMessage): Promise<void> {
     try {
-      const timeReceived = buildDateTimeString(moment().toDate())
+      const timeReceived: string = buildDateTimeString(moment().toDate())
       await this.snsService.publishMessage(await this.mapper.mapToSNSPublishInput(sqsMessage))
-      const timeSent = buildDateTimeString(moment().toDate())
+      const timeSent: string = buildDateTimeString(moment().toDate())
 
       this.logger.logSuccess(sqsMessage.object_reference, sqsMessage.event_reference.toString(), timeReceived, timeSent)
     } catch (err) {
