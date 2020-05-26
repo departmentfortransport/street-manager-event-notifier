@@ -7,7 +7,7 @@ import { worksStatusFilter, trafficManagementTypeFilter, activityTypeFilter, wor
 import { assert } from 'chai'
 import { buildDateTimeString, buildTimeString, buildDateString } from '../../../src/helpers/dateHelper'
 
-describe.only('WorkDataMapper', () => {
+describe('WorkDataMapper', () => {
   let workData: WorkData
   let workDataMapper: WorkDataMapper
 

@@ -1,49 +1,47 @@
 import 'mocha'
-import { WorkData } from '../../../src/models/workData'
-import WorkDataMapper from '../../../src/mappers/workDataMapper'
-import { EventNotifierWorkData, RefWorkStatus, RefWorkCategory, RefTrafficManagementType } from 'street-manager-data'
-import { generateWorkData } from '../../fixtures/workDataFixtures'
-import { worksStatusFilter, trafficManagementTypeFilter, activityTypeFilter, worksCategoryFilter, booleanFilter } from '../../../src/filters'
+import EventNotifierSNSMessageMapper from '../../../src/mappers/eventNotifierSNSMessageMapper'
+import { EventNotifierWorkData, EventNotifierSQSMessage, EventNotifierSNSMessage } from 'street-manager-data'
 import { assert } from 'chai'
-import { buildDateTimeString, buildTimeString, buildDateString } from '../../../src/helpers/dateHelper'
+import PermitDao from '../../../src/daos/permitDao'
+import WorkDataMapper from '../../../src/mappers/workDataMapper'
+import { mock, instance, when, anything } from 'ts-mockito'
+import { generateSQSMessage } from '../../fixtures/sqsFixtures'
+import { generateEventNotifierWorkData } from '../../fixtures/EventNotifierWorkData'
 
-describe.only('WorkDataMapper', () => {
-  let workData: WorkData
+describe('EventNotifierSNSMapper', () => {
+  let sqsMessage: EventNotifierSQSMessage
+  let eventNotifierSNSMessageMapper: EventNotifierSNSMessageMapper
+  let permitDao: PermitDao
   let workDataMapper: WorkDataMapper
+  let eventNotifierWorkData: EventNotifierWorkData
 
   before(() => {
-    workData = { ...generateWorkData(), permit_coordinates: '{"type":"Point","coordinates":[85647.67,653421.03]}' }
-    workDataMapper = new WorkDataMapper()
+    sqsMessage = generateSQSMessage()
+
+    permitDao = mock(PermitDao)
+    workDataMapper = mock(WorkDataMapper)
+
+    eventNotifierWorkData = generateEventNotifierWorkData()
+
+    eventNotifierSNSMessageMapper = new EventNotifierSNSMessageMapper(
+      instance(permitDao),
+      instance(workDataMapper)
+    )
+    when(workDataMapper.mapDataToInfo(anything())).thenReturn(eventNotifierWorkData)
   })
 
-  describe('mapWorkDataToEventNotifierWorkData', () => {
-    it('should map the permitsCSVData location types, ASDs, conditions and lane rental info to CSV response', () => {
-      const result: EventNotifierWorkData = workDataMapper.mapDataToInfo(workData)
+  describe('mapSQSToSNSMessage', () => {
+    it('should map the permitsCSVData location types, ASDs, conditions and lane rental info to CSV response', async () => {
 
-      assert.equal(result.work_reference_number, workData.work_reference_number)
-      assert.equal(result.permit_reference_number, workData.permit_reference_number)
-      assert.equal(result.promoter_swa_code, workData.promoter_organisation_reference)
-      assert.equal(result.promoter_organisation, workData.promoter_organisation_name)
-      assert.equal(result.highway_authority, workData.ha_organisation_name)
-      assert.equal(result.works_location_coordinates, 'Point: 085647.67,653421.03')
-      assert.equal(result.street_name, workData.street_name)
-      assert.equal(result.area_name, workData.area_name)
-      assert.equal(result.work_category, worksCategoryFilter(workData.work_category_id))
-      assert.equal(result.traffic_management_type, trafficManagementTypeFilter(workData.traffic_management_type_id))
-      assert.equal(result.proposed_start_date, buildDateString(workData.proposed_start_date))
-      assert.equal(result.proposed_end_date, buildDateString(workData.proposed_end_date))
-      assert.equal(result.proposed_start_time, buildTimeString(workData.proposed_start_time))
-      assert.equal(result.proposed_end_time, buildTimeString(workData.proposed_end_time))
-      assert.equal(result.actual_start_date, buildDateTimeString(workData.actual_start_date))
-      assert.equal(result.actual_end_date, buildDateTimeString(workData.actual_end_date))
-      assert.equal(result.work_status, worksStatusFilter(RefWorkStatus[workData.work_status_id]))
-      assert.equal(result.usrn, workData.usrn.toString())
-      assert.equal(result.highway_authority_swa_code, workData.ha_organisation_reference)
-      assert.equal(result.work_category_ref, RefWorkCategory[workData.work_category_id])
-      assert.equal(result.traffic_management_type_ref, RefTrafficManagementType[workData.traffic_management_type_id])
-      assert.equal(result.work_status_ref, RefWorkStatus[workData.work_status_id])
-      assert.equal(result.activity_type, activityTypeFilter(workData.activity_type_id))
-      assert.equal(result.is_ttro_required, booleanFilter(workData.is_ttro_required))
+      const result: EventNotifierSNSMessage = await eventNotifierSNSMessageMapper.mapToSNSMessage(sqsMessage)
+
+      assert.equal(result.event_reference, sqsMessage.event_reference)
+      assert.equal(result.event_type, sqsMessage.event_type)
+      assert.equal(result.object_data, eventNotifierWorkData)
+      assert.equal(result.event_time, sqsMessage.event_time)
+      assert.equal(result.object_type, sqsMessage.object_type)
+      assert.equal(result.object_reference, sqsMessage.object_reference)
+      assert.equal(result.version, 1)
     })
   })
 })

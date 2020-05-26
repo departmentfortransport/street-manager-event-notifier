@@ -3,7 +3,7 @@ import { RefActivityType, RefTrafficManagementType, RefWorkCategory, RefWorkStat
 import { generatePointGeoJson } from './geojsonFixtures'
 import { WorkData } from '../../src/models/workData'
 
-export function generateWorkData(permitVersionId = 1, permitId = 1): WorkData {
+export function generateWorkData(): WorkData {
   return {
     work_reference_number: 'some ref',
     permit_reference_number: 'some ref-01',
