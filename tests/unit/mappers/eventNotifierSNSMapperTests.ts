@@ -31,7 +31,7 @@ describe('EventNotifierSNSMapper', () => {
   })
 
   describe('mapSQSToSNSMessage', () => {
-    it('should map the permitsCSVData location types, ASDs, conditions and lane rental info to CSV response', async () => {
+    it('should map the sqs message to an sns message', async () => {
 
       const result: EventNotifierSNSMessage = await eventNotifierSNSMessageMapper.mapToSNSMessage(sqsMessage)
 

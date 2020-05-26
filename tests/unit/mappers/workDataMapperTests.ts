@@ -17,7 +17,7 @@ describe('WorkDataMapper', () => {
   })
 
   describe('mapWorkDataToEventNotifierWorkData', () => {
-    it('should map the permitsCSVData location types, ASDs, conditions and lane rental info to CSV response', () => {
+    it('should map the work data to a high level work data response', () => {
       const result: EventNotifierWorkData = workDataMapper.mapDataToInfo(workData)
 
       assert.equal(result.work_reference_number, workData.work_reference_number)
