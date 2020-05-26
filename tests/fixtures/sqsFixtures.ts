@@ -8,6 +8,5 @@ export function generateSQSMessage(): EventNotifierSQSMessage {
     event_reference: 1,
     event_type: EventTypeNotificationEnum.work_start,
     event_time: moment('2019-07-15 00:00').toDate()
-
   }
 }

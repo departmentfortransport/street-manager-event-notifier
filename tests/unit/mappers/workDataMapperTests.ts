@@ -17,7 +17,7 @@ describe('WorkDataMapper', () => {
   })
 
   describe('mapWorkDataToEventNotifierWorkData', () => {
-    it('should map the work data to a high level work data response', () => {
+    it('should map the work data to an event notifier response', () => {
       const result: EventNotifierWorkData = workDataMapper.mapDataToInfo(workData)
 
       assert.equal(result.work_reference_number, workData.work_reference_number)

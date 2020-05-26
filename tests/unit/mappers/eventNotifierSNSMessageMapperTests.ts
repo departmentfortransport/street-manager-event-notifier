@@ -8,7 +8,7 @@ import { mock, instance, when, anything } from 'ts-mockito'
 import { generateSQSMessage } from '../../fixtures/sqsFixtures'
 import { generateEventNotifierWorkData } from '../../fixtures/EventNotifierWorkData'
 
-describe('EventNotifierSNSMapper', () => {
+describe('EventNotifierSNSMessageMapper', () => {
   let sqsMessage: EventNotifierSQSMessage
   let eventNotifierSNSMessageMapper: EventNotifierSNSMessageMapper
   let permitDao: PermitDao

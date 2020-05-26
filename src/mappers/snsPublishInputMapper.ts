@@ -4,7 +4,8 @@ import TYPES from '../types'
 import EventNotifierSNSMessageMapper from './eventNotifierSNSMessageMapper'
 import { EventNotifierWorkData, EventNotifierSNSMessage, EventTypeNotificationEnum, EventNotifierSQSMessage } from 'street-manager-data'
 import { SNS } from 'aws-sdk'
-
+import { USRN, AREA, HA_ORG, PROMOTER_ORG, ACTIVITY_TYPE } from '../constants/snsMessageAttributes'
+import { MessageAttributeMap } from 'aws-sdk/clients/sns'
 @injectable()
 export default class SNSPublishInputMapper {
 
@@ -22,25 +23,26 @@ export default class SNSPublishInputMapper {
     }
   }
 
-  private generateMessageAttributes(workData: EventNotifierWorkData): {} {
+  private generateMessageAttributes(workData: EventNotifierWorkData): MessageAttributeMap {
+
     return {
-      'USRN': {
+      [USRN] : {
         DataType: 'Number',
         StringValue: workData.usrn
       },
-      'HA_SWA': {
+      [HA_ORG]: {
         DataType: 'String',
         StringValue: workData.highway_authority_swa_code
       },
-      'Promoter_SWA': {
+      [PROMOTER_ORG]: {
         DataType: 'String',
         StringValue: workData.promoter_swa_code
       },
-      'Area': {
+      [AREA]: {
         DataType: 'String',
         StringValue: workData.area_name
       },
-      'Activity_Type': {
+      [ACTIVITY_TYPE]: {
         DataType: 'String',
         StringValue: workData.activity_type
       }
