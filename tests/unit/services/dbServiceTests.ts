@@ -30,7 +30,7 @@ describe('dbService', () => {
       (<Knex.PgConnectionConfig>knexConfig.connection).password = 'knexpw'
       service = new DBService(instance(rds), knexConfig)
 
-      const knex: Knex = await service.connect()
+      const knex: Knex = await service.knex()
 
       assert.equal(knex.client.config.connection.password, 'knexpw')
     })
@@ -39,7 +39,7 @@ describe('dbService', () => {
       when(rds.getAuthToken()).thenResolve('token')
       service = new DBService(instance(rds), knexConfig)
 
-      const knex: Knex = await service.connect()
+      const knex: Knex = await service.knex()
 
       assert.equal(knex.client.config.connection.password, 'token')
     })
