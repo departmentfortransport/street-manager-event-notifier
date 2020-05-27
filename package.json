@@ -16,16 +16,11 @@
   "dependencies": {
     "inversify": "^5.0.1",
     "knex": "^0.20.15",
-    "knex-postgis": "^0.7.0",
-    "moment-timezone": "^0.5.31",
     "pg": "^7.18.2",
-    "reflect-metadata": "^0.1.13",
-    "street-manager-data": "git+ssh://git@github.com:departmentfortransport/street-manager-data#079c370818e44dd7d15b70118b21ee2116528184"
+    "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.51",
-    "@types/geojson": "^7946.0.7",
-    "@types/knex": "^0.16.1",
     "@types/mocha": "^7.0.2",
     "@types/node": "^13.11.1",
     "aws-sdk": "^2.656.0",

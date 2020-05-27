@@ -1,26 +1,42 @@
 import TYPES from './types'
 import iocContainer from './ioc'
 import DBService from './services/dbService'
+import Knex = require('knex')
 import Logger from './utils/logger'
+import SNSService from './services/aws/snsService'
 import { SQSHandler, SQSEvent, SQSRecord } from 'aws-lambda'
-import { EventNotifierSQSMessage } from 'street-manager-data'
-import ObjectMessageServiceDelegator from './services/objectMessageServiceDelegator'
 
 const logger: Logger = iocContainer.get<Logger>(TYPES.Logger)
-const objectMessageServiceDelegator: ObjectMessageServiceDelegator = iocContainer.get<ObjectMessageServiceDelegator>(TYPES.ObjectMessageServiceDelegator)
 
 export const handler: SQSHandler = async(event: SQSEvent) => {
-  const sqsRecord: SQSRecord = event.Records[0]
-  const sqsMessage: EventNotifierSQSMessage = JSON.parse(sqsRecord.body)
-  logger.log(`Received message: ${JSON.stringify(sqsRecord)}`)
+  const sqsMessage: SQSRecord = event.Records[0]
+  logger.log(`Received message: ${JSON.stringify(sqsMessage)}`)
+
+  const knex: Knex = await iocContainer.get<DBService>(TYPES.DBService).connect()
 
   try {
-    await objectMessageServiceDelegator.getObjectMessageService(sqsMessage.object_type).sendMessageToSNS(sqsMessage)
+    const permit = await getPermitFromDB(knex)
+    await sendMessageToSNS(permit, sqsMessage.messageId)
   } catch (err) {
     throw new Error(err)
   } finally {
-    await iocContainer.get<DBService>(TYPES.DBService).destroy()
+    await knex.destroy()
   }
 
   return
+}
+
+async function getPermitFromDB(knex: Knex): Promise<any> {
+  try {
+    return await knex('permit').select('permit_reference_number').limit(1)
+  } catch (err) {
+    logger.error(err)
+    return Promise.reject(err)
+  }
+}
+
+async function sendMessageToSNS(permit: any, messageId: string): Promise<void> {
+  const msg: any = {permit: permit, message_id: messageId}
+  const snsService: SNSService = iocContainer.get<SNSService>(TYPES.SNSService)
+  await snsService.publishMessage(JSON.stringify(msg), iocContainer.get<string>(TYPES.WorkStartTopic))
 }

@@ -12,9 +12,18 @@ export default class SNSService extends AWSService<SNS> {
     super(sns)
   }
 
-  public async publishMessage(message: SNS.PublishInput): Promise<void> {
+  public async publishMessage(message: string, topic: string): Promise<void> {
+    const params: SNS.PublishInput = {
+      Message: message,
+      TopicArn: topic,
+      MessageAttributes: {'USRN': {
+        DataType: 'String',
+        StringValue: '100001'
+      }}
+    }
+
     try {
-      await super.toAWSPromise<SNS.PublishInput, SNS.PublishResponse>(this.sns.publish, message)
+      await super.toAWSPromise<SNS.PublishInput, SNS.PublishResponse>(this.sns.publish, params)
     } catch (err) {
       this.logger.error(err)
       return Promise.reject(err)
