@@ -25,6 +25,7 @@ export default class DBService {
 
   public async knex(): Promise<Knex> {
     if (!this.connection) {
+      console.log('connecting db')
       await this.connect()
     }
 
@@ -39,12 +40,15 @@ export default class DBService {
 
   public async connect(): Promise<void> {
     const config: Knex.Config = this.knexConfig
-    this.configureConnection(<Knex.PgConnectionConfig>config.connection)
+    await this.configureConnection(<Knex.PgConnectionConfig>config.connection)
+    console.log('connection:' + JSON.stringify(<Knex.PgConnectionConfig>config.connection))
+    console.log('password:' + <Knex.PgConnectionConfig>config.connection['password'])
     this.connection = Knex(config)
   }
 
   private async configureConnection(connection: Knex.PgConnectionConfig): Promise<void> {
     if (!connection.password) {
+      console.log('getting token')
       connection.password = await this.rds.getAuthToken()
     }
   }
