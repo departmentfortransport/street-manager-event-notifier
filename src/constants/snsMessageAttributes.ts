@@ -1,0 +1,5 @@
+export const USRN = 'usrn'
+export const AREA = 'area'
+export const PROMOTER_ORG = 'promoter_org'
+export const HA_ORG = 'ha_org'
+export const ACTIVITY_TYPE = 'activity_type'
