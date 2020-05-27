@@ -33,26 +33,13 @@ describe('snsService', () => {
 
       const message = JSON.stringify({test: 'message'})
       const arn = 'topicArn'
-      const messageAttributes = {
-        'USRN': {
-          DataType: 'Number',
-          StringValue: '001001'
-        }
-      }
 
-      const input: SNS.PublishInput = {
-        Message: message,
-        TopicArn: arn,
-        MessageAttributes: messageAttributes
-      }
+      await service.publishMessage(message, arn)
 
-      await service.publishMessage(input)
+      const input: SNS.PublishInput = publish.lastCall.args[0]
 
-      const methodInput: SNS.PublishInput = publish.lastCall.args[0]
-
-      assert.equal(methodInput.Message, input.Message)
-      assert.equal(methodInput.TopicArn, input.TopicArn)
-      assert.equal(methodInput.MessageAttributes, input.MessageAttributes)
+      assert.equal(input.Message, message)
+      assert.equal(input.TopicArn, arn)
     })
 
     it('should return error from SNS', async () => {
@@ -60,21 +47,9 @@ describe('snsService', () => {
 
       const message = JSON.stringify({test: 'message'})
       const arn = 'topicArn'
-      const messageAttributes = {
-        'USRN': {
-          DataType: 'Number',
-          StringValue: '001001'
-        }
-      }
-
-      const input: SNS.PublishInput = {
-        Message: message,
-        TopicArn: arn,
-        MessageAttributes: messageAttributes
-      }
 
       try {
-        await service.publishMessage(input)
+        await service.publishMessage(message, arn)
         assert.fail()
       } catch (err) {
         assert.equal(err.message, 'error')
