@@ -6,16 +6,19 @@ import { EventNotifierWorkData, EventNotifierSNSMessage, EventTypeNotificationEn
 import { SNS } from 'aws-sdk'
 import { USRN, AREA, HA_ORG, PROMOTER_ORG, ACTIVITY_TYPE } from '../constants/snsMessageAttributes'
 import { MessageAttributeMap } from 'aws-sdk/clients/sns'
+
 @injectable()
 export default class SNSPublishInputMapper {
 
   public constructor(
     @inject(TYPES.EventNotifierSNSMessageMapper) private mapper: EventNotifierSNSMessageMapper,
     @inject(TYPES.WorkStartTopic) private workStartTopic: string,
-    @inject(TYPES.WorkStopTopic) private workStopTopic: string) {}
+    @inject(TYPES.WorkStopTopic) private workStopTopic: string
+  ) {}
 
   public async mapToSNSPublishInput(sqsMessage: EventNotifierSQSMessage): Promise<SNS.PublishInput> {
     const snsMessage: EventNotifierSNSMessage = await this.mapper.mapToSNSMessage(sqsMessage)
+
     return {
       Message: JSON.stringify(snsMessage),
       TopicArn: this.getTopic(snsMessage.event_type),
@@ -24,7 +27,6 @@ export default class SNSPublishInputMapper {
   }
 
   private generateMessageAttributes(workData: EventNotifierWorkData): MessageAttributeMap {
-
     return {
       [USRN] : {
         DataType: 'Number',
