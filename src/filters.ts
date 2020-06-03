@@ -1,5 +1,4 @@
 import { RefWorkCategory } from 'street-manager-data'
-import { buildDateTimeString, buildTimeString } from './helpers/dateHelper'
 
 export function booleanFilter(value: boolean | string) {
   if (value === true || value === 'true') {
@@ -86,9 +85,9 @@ export function coordinateFilter(value: number): string {
 }
 
 export function asOptionalTime(dateToFormat?: Date): string {
-  return dateToFormat ? buildTimeString(dateToFormat) : null
+  return dateToFormat ? dateToFormat.toISOString() : null
 }
 
 export function asOptionalDateTime(dateToFormat?: Date): string {
-  return dateToFormat ? buildDateTimeString(dateToFormat) : null
+  return dateToFormat ? dateToFormat.toISOString() : null
 }

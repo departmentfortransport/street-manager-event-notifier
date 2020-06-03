@@ -10,8 +10,9 @@ import { EventNotifierWorkData, EventNotifierSNSMessage, EventNotifierSQSMessage
 export default class EventNotifierSNSMessageMapper {
 
   public constructor(
-    @inject(TYPES.PermitDao) private dao: PermitDao,
-    @inject(TYPES.WorkDataMapper) private mapper: WorkDataMapper) {}
+    @inject(TYPES.PermitDao) private permitDao: PermitDao,
+    @inject(TYPES.WorkDataMapper) private workDataMapper: WorkDataMapper
+  ) {}
 
   public async mapToSNSMessage(sqsMessage: EventNotifierSQSMessage): Promise<EventNotifierSNSMessage> {
     return {
@@ -26,8 +27,8 @@ export default class EventNotifierSNSMessageMapper {
   }
 
   private async generateWorkData(permitReferenceNumber: string): Promise<EventNotifierWorkData> {
-    const dbData: WorkData =  await this.dao.getPermit(permitReferenceNumber)
+    const workData: WorkData = await this.permitDao.getPermit(permitReferenceNumber)
 
-    return await this.mapper.mapDataToInfo(dbData)
+    return await this.workDataMapper.mapWorkDataToEventNotifierWorkData(workData)
   }
 }

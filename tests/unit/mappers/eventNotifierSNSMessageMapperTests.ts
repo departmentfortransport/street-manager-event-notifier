@@ -27,7 +27,7 @@ describe('EventNotifierSNSMessageMapper', () => {
       instance(permitDao),
       instance(workDataMapper)
     )
-    when(workDataMapper.mapDataToInfo(anything())).thenReturn(eventNotifierWorkData)
+    when(workDataMapper.mapWorkDataToEventNotifierWorkData(anything())).thenReturn(eventNotifierWorkData)
   })
 
   describe('mapSQSToSNSMessage', () => {
