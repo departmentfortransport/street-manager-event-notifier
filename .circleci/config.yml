@@ -53,7 +53,7 @@ aliases:
     command: |
       source $BASH_ENV
       mkdir /tmp/lambda
-      docker build --build-arg CIRCLE_SHA1=${CIRCLE_SHA1} -t event-notifier:${CIRCLE_SHA1} . -f Dockerfile_event-notifier
+      docker build --build-arg CIRCLE_SHA1=${CIRCLE_SHA1} --build-arg NODE_BASE_IMAGE=${NODE_BASE_IMAGE} -t event-notifier:${CIRCLE_SHA1} . -f Dockerfile_event-notifier
       docker run \
         -v /tmp/lambda:/host \
         -it event-notifier:${CIRCLE_SHA1} \
