@@ -21,7 +21,7 @@ describe('ObjectMessageServiceDelegator', () => {
 
   describe('getObjectMessageService', () => {
     it('should return the permit object message service when the object type is Permit', () => {
-      const result: ObjectMessageService = objectMessageServiceDelegator.getObjectMessageService(ObjectTypeNotificationEnum.Permit)
+      const result: ObjectMessageService = objectMessageServiceDelegator.getObjectMessageService(ObjectTypeNotificationEnum.PERMIT)
 
       assert.equal(result, permitObjectMessageService)
     })

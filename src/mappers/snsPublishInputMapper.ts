@@ -51,9 +51,9 @@ export default class SNSPublishInputMapper {
 
   private getTopic(eventType: EventTypeNotificationEnum): string {
     switch (eventType) {
-      case EventTypeNotificationEnum.work_start:
+      case EventTypeNotificationEnum.WORK_START:
         return this.workStartTopic
-      case EventTypeNotificationEnum.work_end:
+      case EventTypeNotificationEnum.WORK_STOP:
         return this.workStopTopic
       default:
         throw new Error(`The following event type is not valid: [${eventType}]`)

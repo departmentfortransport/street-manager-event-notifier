@@ -15,7 +15,7 @@ export const handler: SQSHandler = async(event: SQSEvent) => {
   logger.log(`Received message: ${JSON.stringify(sqsRecord)}`)
 
   try {
-    await objectMessageServiceDelegator.getObjectMessageService(sqsMessage.object_type).sendMessageToSNS(sqsMessage)
+    await objectMessageServiceDelegator.getObjectMessageService(sqsMessage.object_type).sendMessageToSNS(sqsMessage, new Date())
   } catch (err) {
     throw new Error(err)
   } finally {

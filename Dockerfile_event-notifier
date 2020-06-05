@@ -1,4 +1,6 @@
-FROM 454455319752.dkr.ecr.eu-west-2.amazonaws.com/nodejs:alpine-3.11_nodejs-12 AS base
+ARG NODE_BASE_IMAGE
+
+FROM $NODE_BASE_IMAGE AS base
 RUN apk upgrade --no-cache && \
     mkdir -p /opt/app/dft-street-manager-event-notifier
 

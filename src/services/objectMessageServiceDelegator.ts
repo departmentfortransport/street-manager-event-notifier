@@ -14,7 +14,7 @@ export default class ObjectMessageServiceDelegator {
 
   public getObjectMessageService(objectMessageType: ObjectTypeNotificationEnum): ObjectMessageService {
     switch (objectMessageType) {
-      case ObjectTypeNotificationEnum.Permit:
+      case ObjectTypeNotificationEnum.PERMIT:
         return this.permitObjectMessageService
       default:
         throw new Error(`The following object message type is not valid: [${objectMessageType}]`)

@@ -30,9 +30,9 @@ describe('PermitObjectMessageService', () => {
       when(snsPublishInputMapper.mapToSNSPublishInput(anything())).thenResolve(generatePublishInput())
       when(snsService.publishMessage(anything())).thenResolve()
 
-      await permitObjectMessageService.sendMessageToSNS(generateSQSMessage())
+      await permitObjectMessageService.sendMessageToSNS(generateSQSMessage(), new Date())
 
-      verify(logger.logSuccess(anything(), anything(), anything(), anything())).once()
+      verify(logger.log(anything())).once()
       verify(snsService.publishMessage(anything())).once()
     })
   })
