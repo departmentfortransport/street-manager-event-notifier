@@ -40,7 +40,7 @@ describe('SNSPublishInputMapper', () => {
       stopARN
     )
 
-    when(workDataMapper.mapDataToInfo(anything())).thenReturn(eventNotifierWorkData)
+    when(workDataMapper.mapWorkDataToEventNotifierWorkData(anything())).thenReturn(eventNotifierWorkData)
     when(eventNotifierSNSMessageMapper.mapToSNSMessage(sqsMessage)).thenReturn(Promise.resolve(snsMessage))
   })
 
