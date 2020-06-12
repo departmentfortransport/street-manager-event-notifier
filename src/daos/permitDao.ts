@@ -12,9 +12,9 @@ export default class PermitDao {
   private PERMIT_COLUMNS: string[] = [
     'work.work_reference_number',
     'permit.permit_reference_number',
-    'work.promoter_organisation_reference',
+    'promoter_organisation.org_ref as promoter_organisation_reference',
     'promoter_organisation.organisation_name as promoter_organisation_name',
-    'work.ha_organisation_reference',
+    'ha_organisation.org_ref as ha_organisation_reference',
     'ha_organisation.organisation_name as ha_organisation_name',
     'work.street_name',
     'work.area_name',
@@ -53,8 +53,8 @@ export default class PermitDao {
     return knex(this.PERMIT_TABLE_NAME)
       .innerJoin('permit_version', 'permit.permit_id', 'permit_version.permit_id').where('permit_version.is_current_version', true)
       .innerJoin('work', 'permit.work_id', 'work.work_id')
-      .innerJoin('organisation as promoter_organisation', 'promoter_organisation.org_ref', 'work.promoter_organisation_reference')
-      .innerJoin('organisation as ha_organisation', 'ha_organisation.org_ref', 'work.ha_organisation_reference')
+      .innerJoin('organisation as promoter_organisation', 'promoter_organisation.organisation_id', 'work.promoter_organisation_id')
+      .innerJoin('organisation as ha_organisation', 'ha_organisation.organisation_id', 'work.ha_organisation_id')
       .where('permit.permit_reference_number', permitReferenceNumber.toUpperCase())
   }
 }
