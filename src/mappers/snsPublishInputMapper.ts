@@ -27,7 +27,7 @@ export default class SNSPublishInputMapper {
   }
 
   private generateMessageAttributes(workData: EventNotifierWorkData): MessageAttributeMap {
-    return {
+    const attributes: MessageAttributeMap = {
       [USRN] : {
         DataType: 'Number',
         StringValue: workData.usrn
@@ -40,15 +40,20 @@ export default class SNSPublishInputMapper {
         DataType: 'String',
         StringValue: workData.promoter_swa_code
       },
-      [AREA]: {
-        DataType: 'String',
-        StringValue: workData.area_name
-      },
       [ACTIVITY_TYPE]: {
         DataType: 'String',
         StringValue: workData.activity_type
       }
     }
+
+    if (workData.area_name) {
+      attributes[AREA] = {
+          DataType: 'String',
+          StringValue: workData.area_name
+      }
+    }
+
+    return attributes
   }
 
   private getTopic(eventType: EventTypeNotificationEnum): string {

@@ -21,7 +21,7 @@ describe('SNSPublishInputMapper', () => {
   let startARN: string
   let stopARN: string
 
-  before(() => {
+  beforeEach(() => {
     sqsMessage = generateSQSMessage()
     snsMessage = generateSNSMessage()
 
@@ -52,6 +52,20 @@ describe('SNSPublishInputMapper', () => {
       assert.equal(result.TopicArn, startARN)
       assert.equal(result.MessageAttributes[USRN].StringValue, snsMessage.object_data.usrn)
       assert.equal(result.MessageAttributes[AREA].StringValue, snsMessage.object_data.area_name)
+      assert.equal(result.MessageAttributes[HA_ORG].StringValue, snsMessage.object_data.highway_authority_swa_code)
+      assert.equal(result.MessageAttributes[PROMOTER_ORG].StringValue, snsMessage.object_data.promoter_swa_code)
+      assert.equal(result.MessageAttributes[ACTIVITY_TYPE].StringValue, snsMessage.object_data.activity_type)
+    })
+
+    it('should not map the Area attribute to AWS publish input object if not provided', async () => {
+      snsMessage.object_data.area_name = null
+
+      const result: SNS.PublishInput = await snsPublishInputMapper.mapToSNSPublishInput(sqsMessage)
+
+      assert.equal(result.Message, JSON.stringify(snsMessage))
+      assert.equal(result.TopicArn, startARN)
+      assert.equal(result.MessageAttributes[USRN].StringValue, snsMessage.object_data.usrn)
+      assert.isUndefined(result.MessageAttributes[AREA])
       assert.equal(result.MessageAttributes[HA_ORG].StringValue, snsMessage.object_data.highway_authority_swa_code)
       assert.equal(result.MessageAttributes[PROMOTER_ORG].StringValue, snsMessage.object_data.promoter_swa_code)
       assert.equal(result.MessageAttributes[ACTIVITY_TYPE].StringValue, snsMessage.object_data.activity_type)
