@@ -20,7 +20,8 @@
     "moment-timezone": "^0.5.31",
     "pg": "^7.18.2",
     "reflect-metadata": "^0.1.13",
-    "street-manager-data": "git+ssh://git@github.com:departmentfortransport/street-manager-data#879fee614ce951f6bf12d74458a14e69952561d7"
+    "street-manager-data": "git+ssh://git@github.com:departmentfortransport/street-manager-data#879fee614ce951f6bf12d74458a14e69952561d7",
+    "wkx": "^0.4.8"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.51",

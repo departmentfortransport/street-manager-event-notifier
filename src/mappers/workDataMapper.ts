@@ -1,12 +1,15 @@
 import 'reflect-metadata'
-import { injectable } from 'inversify'
+import { injectable, inject } from 'inversify'
 import { WorkData } from '../models/workData'
 import { EventNotifierWorkData, RefWorkStatus, RefWorkCategory, RefTrafficManagementType } from 'street-manager-data'
-import { mapCoordinatesToCSV } from '../helpers/coordinatesHelper'
 import { worksCategoryFilter, trafficManagementTypeFilter, worksStatusFilter, asOptionalDateTime, asOptionalTime, booleanFilter, activityTypeFilter } from '../filters'
+import GeometryService from '../services/geometryService'
+import TYPES from '../types'
 
 @injectable()
 export default class WorkDataMapper {
+
+  public constructor(@inject(TYPES.GeometryService) private geometryService: GeometryService) {}
 
   public mapWorkDataToEventNotifierWorkData(workData: WorkData): EventNotifierWorkData {
     return {
@@ -15,7 +18,7 @@ export default class WorkDataMapper {
       promoter_swa_code: workData.promoter_organisation_reference,
       promoter_organisation: workData.promoter_organisation_name,
       highway_authority: workData.ha_organisation_name,
-      works_location_coordinates: mapCoordinatesToCSV(workData.permit_coordinates.toString()),
+      works_location_coordinates: this.geometryService.parseGeoJSONStringToWKT(workData.permit_coordinates.toString()),
       street_name: workData.street_name,
       area_name: workData.area_name,
       work_category: worksCategoryFilter(workData.work_category_id),
