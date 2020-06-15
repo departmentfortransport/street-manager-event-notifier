@@ -1,6 +1,6 @@
 import * as moment from 'moment-timezone'
 import { EventTypeNotificationEnum, ObjectTypeNotificationEnum, EventNotifierSNSMessage } from 'street-manager-data'
-import { generateEventNotifierWorkData } from './EventNotifierWorkData'
+import { generateEventNotifierWorkData } from './eventNotifierWorkDataFixtures'
 
 export function generateSNSMessage(): EventNotifierSNSMessage {
   return {

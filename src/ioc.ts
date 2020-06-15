@@ -16,6 +16,7 @@ import EventNotifierSNSMessageMapper from './mappers/eventNotifierSNSMessageMapp
 import PermitDao from './daos/permitDao'
 import SNSPublishInputMapper from './mappers/snsPublishInputMapper'
 import GeometryService from './services/geometryService'
+import PermitLocationTypeDao from './daos/permitLocationTypeDao'
 
 const iocContainer = new Container()
 
@@ -27,6 +28,7 @@ iocContainer.bind<DBService>(TYPES.DBService).to(DBService).inSingletonScope()
 iocContainer.bind<ObjectMessageServiceDelegator>(TYPES.ObjectMessageServiceDelegator).to(ObjectMessageServiceDelegator).inSingletonScope()
 iocContainer.bind<PermitObjectMessageService>(TYPES.PermitObjectMessageService).to(PermitObjectMessageService)
 iocContainer.bind<PermitDao>(TYPES.PermitDao).to(PermitDao)
+iocContainer.bind<PermitLocationTypeDao>(TYPES.PermitLocationTypeDao).to(PermitLocationTypeDao)
 iocContainer.bind<GeometryService>(TYPES.GeometryService).to(GeometryService)
 
 // AWS

@@ -16,8 +16,8 @@ export function generateEventNotifierWorkData(): EventNotifierWorkData {
     proposed_start_time: '11:00',
     proposed_end_date: '17-07-2019',
     proposed_end_time: '12:00',
-    actual_start_date: '15-07-2019 01:00',
-    actual_end_date: '17-07-2019 01:00',
+    actual_start_date_time: '15-07-2019 01:00',
+    actual_end_date_time: '17-07-2019 01:00',
     work_status: 'Works planned',
     usrn: '8400845',
     highway_authority_swa_code: 'a',
@@ -25,6 +25,8 @@ export function generateEventNotifierWorkData(): EventNotifierWorkData {
     traffic_management_type_ref: 'no_carriageway_incursion',
     work_status_ref: 'planned',
     activity_type: 'Core Sampling',
-    is_ttro_required: 'No'
+    is_ttro_required: 'No',
+    is_covid_19_response: 'No',
+    works_location_type: 'Footway'
   }
 }
