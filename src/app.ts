@@ -12,7 +12,7 @@ const objectMessageServiceDelegator: ObjectMessageServiceDelegator = iocContaine
 export const handler: SQSHandler = async(event: SQSEvent) => {
   const sqsRecord: SQSRecord = event.Records[0]
   const sqsMessage: EventNotifierSQSMessage = JSON.parse(sqsRecord.body)
-  logger.log(`Received message: ${JSON.stringify(sqsRecord)}`)
+  logger.logWithObject('Received message:', sqsRecord)
 
   try {
     await objectMessageServiceDelegator.getObjectMessageService(sqsMessage.object_type).sendMessageToSNS(sqsMessage, new Date())

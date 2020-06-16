@@ -26,7 +26,7 @@ export default class PermitObjectMessageService implements ObjectMessageService 
     try {
       await this.snsService.publishMessage(await this.mapper.mapToSNSPublishInput(sqsMessage))
 
-      this.logger.log(`Message successfully sent to SNS: ${this.generateLogMessage(sqsMessage, timeReceived)}`)
+      this.logger.logWithObject('Message successfully sent to SNS:', this.generateLogMessage(sqsMessage, timeReceived))
     } catch (err) {
       return Promise.reject(err)
     }

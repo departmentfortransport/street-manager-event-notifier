@@ -7,6 +7,10 @@ export default class Logger {
     console.log(message)
   }
 
+  public logWithObject(message: string, object: any): void {
+    console.log(message, object)
+  }
+
   public error(message: string): void {
     console.error(message)
   }
