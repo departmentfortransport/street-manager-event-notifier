@@ -16,6 +16,7 @@ const TYPES = {
   SNSService: Symbol.for('SNSService'),
   ObjectMessageServiceDelegator: Symbol.for('ObjectMessageServiceDelegator'),
   PermitObjectMessageService: Symbol.for('PermitObjectMessageService'),
+  GeometryService: Symbol.for('GeometryService'),
 
   // DAOs
   PermitDao: Symbol.for('PermitDao'),

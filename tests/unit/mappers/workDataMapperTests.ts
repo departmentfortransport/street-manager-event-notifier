@@ -5,14 +5,24 @@ import { EventNotifierWorkData, RefWorkStatus, RefWorkCategory, RefTrafficManage
 import { generateWorkData } from '../../fixtures/workDataFixtures'
 import { worksStatusFilter, trafficManagementTypeFilter, activityTypeFilter, worksCategoryFilter, booleanFilter } from '../../../src/filters'
 import { assert } from 'chai'
+import GeometryService from '../../../src/services/geometryService'
+import { mock, instance, when } from 'ts-mockito'
 
 describe('WorkDataMapper', () => {
   let workData: WorkData
   let workDataMapper: WorkDataMapper
+  let geometryService: GeometryService
+
+  const permitCoordinates = '{"type":"Point","coordinates":[85647.67,653421.03]}'
+  const permitCoordinatesFormatted = 'POINT(85647.67 653421.03)'
 
   before(() => {
-    workData = { ...generateWorkData(), permit_coordinates: '{"type":"Point","coordinates":[85647.67,653421.03]}' }
-    workDataMapper = new WorkDataMapper()
+    geometryService = mock(GeometryService)
+
+    workData = { ...generateWorkData(), permit_coordinates: permitCoordinates }
+    workDataMapper = new WorkDataMapper(instance(geometryService))
+
+    when(geometryService.parseGeoJSONStringToWKT(permitCoordinates)).thenReturn(permitCoordinatesFormatted)
   })
 
   describe('mapWorkDataToEventNotifierWorkData', () => {
@@ -24,7 +34,7 @@ describe('WorkDataMapper', () => {
       assert.equal(result.promoter_swa_code, workData.promoter_organisation_reference)
       assert.equal(result.promoter_organisation, workData.promoter_organisation_name)
       assert.equal(result.highway_authority, workData.ha_organisation_name)
-      assert.equal(result.works_location_coordinates, 'Point: 085647.67,653421.03')
+      assert.equal(result.works_location_coordinates, permitCoordinatesFormatted)
       assert.equal(result.street_name, workData.street_name)
       assert.equal(result.area_name, workData.area_name)
       assert.equal(result.work_category, worksCategoryFilter(workData.work_category_id))
