@@ -24,8 +24,12 @@ export default class DBService {
   }
 
   public async knex(): Promise<Knex> {
-    if (!this.connection) {
-      await this.connect()
+    try {
+      if (!this.connection) {
+        await this.connect()
+      }
+    } catch (err) {
+      console.log(err)
     }
 
     return this.connection
