@@ -5,6 +5,7 @@ import DBService from '../services/dbService'
 import * as postgis from 'knex-postgis'
 import { WorkData } from '../models/workData'
 import 'reflect-metadata'
+
 @injectable()
 export default class PermitDao {
   private readonly PERMIT_TABLE_NAME = 'permit'
@@ -18,6 +19,7 @@ export default class PermitDao {
     'ha_organisation.organisation_name as ha_organisation_name',
     'work.street_name',
     'work.area_name',
+    'permit_version.permit_version_id',
     'permit_version.work_category_id',
     'permit_version.traffic_management_type_id',
     'permit_version.proposed_start_date',
@@ -29,14 +31,13 @@ export default class PermitDao {
     'work.work_status_id',
     'work.usrn',
     'permit_version.activity_type_id',
-    'permit_version.is_ttro_required'
+    'permit_version.is_ttro_required',
+    'permit.is_covid_19_response'
   ]
 
-  public constructor (
-    @inject(TYPES.DBService) private db: DBService
-  ) {}
+  public constructor (@inject(TYPES.DBService) private db: DBService) {}
 
-  public async getPermit(permitReferenceNumber: string): Promise<WorkData> {
+  public async getWorkData(permitReferenceNumber: string): Promise<WorkData> {
     const knex: Knex = await this.db.knex()
     const knexPostgis: postgis.KnexPostgis = this.db.postgis()
 

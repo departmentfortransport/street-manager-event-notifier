@@ -2,10 +2,9 @@ import 'mocha'
 import EventNotifierSNSMessageMapper from '../../../src/mappers/eventNotifierSNSMessageMapper'
 import { EventNotifierWorkData, EventNotifierSQSMessage, EventNotifierSNSMessage } from 'street-manager-data'
 import { assert } from 'chai'
-import WorkDataMapper from '../../../src/mappers/workDataMapper'
-import { mock, instance, when, anything } from 'ts-mockito'
+import { mock, instance, when } from 'ts-mockito'
 import { generateSQSMessage } from '../../fixtures/sqsFixtures'
-import { generateEventNotifierWorkData } from '../../fixtures/EventNotifierWorkData'
+import { generateEventNotifierWorkData } from '../../fixtures/eventNotifierWorkDataFixtures'
 import SNSPublishInputMapper from '../../../src/mappers/snsPublishInputMapper'
 import { SNS } from 'aws-sdk'
 import { generateSNSMessage } from '../../fixtures/snsFixtures'
@@ -16,7 +15,6 @@ describe('SNSPublishInputMapper', () => {
   let snsMessage: EventNotifierSNSMessage
   let eventNotifierSNSMessageMapper: EventNotifierSNSMessageMapper
   let snsPublishInputMapper: SNSPublishInputMapper
-  let workDataMapper: WorkDataMapper
   let eventNotifierWorkData: EventNotifierWorkData
   let startARN: string
   let stopARN: string
@@ -24,13 +22,9 @@ describe('SNSPublishInputMapper', () => {
   beforeEach(() => {
     sqsMessage = generateSQSMessage()
     snsMessage = generateSNSMessage()
-
-    workDataMapper = mock(WorkDataMapper)
-
     eventNotifierWorkData = generateEventNotifierWorkData()
 
     eventNotifierSNSMessageMapper = mock(EventNotifierSNSMessageMapper)
-
     startARN = 'START'
     stopARN = 'STOP'
 
@@ -40,13 +34,12 @@ describe('SNSPublishInputMapper', () => {
       stopARN
     )
 
-    when(workDataMapper.mapWorkDataToEventNotifierWorkData(anything())).thenReturn(eventNotifierWorkData)
-    when(eventNotifierSNSMessageMapper.mapToSNSMessage(sqsMessage)).thenReturn(Promise.resolve(snsMessage))
+    when(eventNotifierSNSMessageMapper.mapToSNSMessage(sqsMessage, eventNotifierWorkData)).thenResolve(snsMessage)
   })
 
   describe('mapSQSToPublishInput', () => {
     it('should map the sqs message to an AWS publish input object', async () => {
-      const result: SNS.PublishInput = await snsPublishInputMapper.mapToSNSPublishInput(sqsMessage)
+      const result: SNS.PublishInput = await snsPublishInputMapper.mapToSNSPublishInput(sqsMessage, eventNotifierWorkData)
 
       assert.equal(result.Message, JSON.stringify(snsMessage))
       assert.equal(result.TopicArn, startARN)
@@ -60,7 +53,7 @@ describe('SNSPublishInputMapper', () => {
     it('should not map the Area attribute to AWS publish input object if not provided', async () => {
       snsMessage.object_data.area_name = null
 
-      const result: SNS.PublishInput = await snsPublishInputMapper.mapToSNSPublishInput(sqsMessage)
+      const result: SNS.PublishInput = await snsPublishInputMapper.mapToSNSPublishInput(sqsMessage, eventNotifierWorkData)
 
       assert.equal(result.Message, JSON.stringify(snsMessage))
       assert.equal(result.TopicArn, startARN)

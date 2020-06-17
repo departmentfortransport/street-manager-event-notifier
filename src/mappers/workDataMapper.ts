@@ -1,8 +1,8 @@
 import 'reflect-metadata'
 import { injectable, inject } from 'inversify'
 import { WorkData } from '../models/workData'
-import { EventNotifierWorkData, RefWorkStatus, RefWorkCategory, RefTrafficManagementType } from 'street-manager-data'
-import { worksCategoryFilter, trafficManagementTypeFilter, worksStatusFilter, asOptionalDateTime, asOptionalTime, booleanFilter, activityTypeFilter } from '../filters'
+import { EventNotifierWorkData, RefWorkStatus, RefWorkCategory, RefTrafficManagementType, PermitLocationType } from 'street-manager-data'
+import { worksCategoryFilter, trafficManagementTypeFilter, worksStatusFilter, asOptionalDateTime, asOptionalTime, booleanFilter, activityTypeFilter, locationTypeFilter } from '../filters'
 import GeometryService from '../services/geometryService'
 import TYPES from '../types'
 
@@ -11,7 +11,7 @@ export default class WorkDataMapper {
 
   public constructor(@inject(TYPES.GeometryService) private geometryService: GeometryService) {}
 
-  public mapWorkDataToEventNotifierWorkData(workData: WorkData): EventNotifierWorkData {
+  public mapWorkDataToEventNotifierWorkData(workData: WorkData, locationTypes: PermitLocationType[]): EventNotifierWorkData {
     return {
       work_reference_number: workData.work_reference_number,
       permit_reference_number: workData.permit_reference_number,
@@ -27,8 +27,8 @@ export default class WorkDataMapper {
       proposed_start_time: asOptionalTime(workData.proposed_start_time),
       proposed_end_date: workData.proposed_end_date.toISOString(),
       proposed_end_time: asOptionalTime(workData.proposed_end_time),
-      actual_start_date: asOptionalDateTime(workData.actual_start_date),
-      actual_end_date: asOptionalDateTime(workData.actual_end_date),
+      actual_start_date_time: asOptionalDateTime(workData.actual_start_date),
+      actual_end_date_time: asOptionalDateTime(workData.actual_end_date),
       work_status: worksStatusFilter(RefWorkStatus[workData.work_status_id]),
       usrn: workData.usrn.toString(),
       highway_authority_swa_code: workData.ha_organisation_reference,
@@ -36,7 +36,15 @@ export default class WorkDataMapper {
       traffic_management_type_ref: RefTrafficManagementType[workData.traffic_management_type_id],
       work_status_ref: RefWorkStatus[workData.work_status_id],
       activity_type: activityTypeFilter(workData.activity_type_id),
-      is_ttro_required: booleanFilter(workData.is_ttro_required)
+      is_ttro_required: booleanFilter(workData.is_ttro_required),
+      is_covid_19_response: workData.is_covid_19_response !== null ? booleanFilter(workData.is_covid_19_response) : null,
+      works_location_type: locationTypes ? this.mapWorksLocationTypesToString(locationTypes) : null
     }
+  }
+
+  private mapWorksLocationTypesToString(permitLocationTypes: PermitLocationType[]): string {
+    const permitLocationTypesAsArray: string[] = permitLocationTypes.map((permitLocationType: PermitLocationType) => locationTypeFilter(permitLocationType.location_type_id))
+
+    return permitLocationTypesAsArray.join(', ')
   }
 }

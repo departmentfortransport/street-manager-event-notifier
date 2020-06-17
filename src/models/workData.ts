@@ -22,4 +22,6 @@ export interface WorkData {
   usrn: number
   activity_type_id: RefActivityType
   is_ttro_required: boolean
+  is_covid_19_response?: boolean
+  permit_version_id?: number
 }

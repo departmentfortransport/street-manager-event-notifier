@@ -16,8 +16,8 @@ export default class SNSPublishInputMapper {
     @inject(TYPES.WorkStopTopic) private workStopTopic: string
   ) {}
 
-  public async mapToSNSPublishInput(sqsMessage: EventNotifierSQSMessage): Promise<SNS.PublishInput> {
-    const snsMessage: EventNotifierSNSMessage = await this.mapper.mapToSNSMessage(sqsMessage)
+  public async mapToSNSPublishInput(sqsMessage: EventNotifierSQSMessage, eventNotifierData: EventNotifierWorkData): Promise<SNS.PublishInput> {
+    const snsMessage: EventNotifierSNSMessage = await this.mapper.mapToSNSMessage(sqsMessage, eventNotifierData)
 
     return {
       Message: JSON.stringify(snsMessage),

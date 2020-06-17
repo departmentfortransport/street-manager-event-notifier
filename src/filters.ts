@@ -1,6 +1,6 @@
 import { RefWorkCategory } from 'street-manager-data'
 
-export function booleanFilter(value: boolean | string) {
+export function booleanFilter(value: boolean | string): string {
   if (value === true || value === 'true') {
     return 'Yes'
   } else if (value === false || value === 'false') {
@@ -21,7 +21,7 @@ enum WorksStatusType {
   section_81 = 'Section 81 works'
 }
 
-export function worksStatusFilter(workStatus: string) {
+export function worksStatusFilter(workStatus: string): string {
   return WorksStatusType[workStatus]
 }
 
@@ -35,7 +35,7 @@ enum WorksCategory {
   'HS2 (Highway)' = RefWorkCategory.hs2_highway
 }
 
-export function worksCategoryFilter(worksCategoryId: number) {
+export function worksCategoryFilter(worksCategoryId: number): string {
   return WorksCategory[worksCategoryId]
 }
 
@@ -53,7 +53,7 @@ enum FormattedTrafficManagementType {
   'No carriageway incursion' = 11
 }
 
-export function trafficManagementTypeFilter(trafficManagementTypeId: number) {
+export function trafficManagementTypeFilter(trafficManagementTypeId: number): string {
   return FormattedTrafficManagementType[trafficManagementTypeId]
 }
 
@@ -76,8 +76,24 @@ enum ActivityType {
   'Optional permit (no fee) e.g. for traffic management etc' = 16
 }
 
-export function activityTypeFilter(activityTypeId: number) {
+export function activityTypeFilter(activityTypeId: number): string {
   return ActivityType[activityTypeId]
+}
+
+enum LocationType {
+  'Footway' = 1,
+  'Carriageway' = 2,
+  'Verge' = 3,
+  'Cycleway' = 4,
+  'Footpath' = 5,
+  'Parking place' = 6,
+  'Bus stop or stand' = 7,
+  'Cycle hire docking station' = 8,
+  'Taxi rank' = 9
+}
+
+export function locationTypeFilter(locationTypeId: number): string {
+  return LocationType[locationTypeId]
 }
 
 export function coordinateFilter(value: number): string {

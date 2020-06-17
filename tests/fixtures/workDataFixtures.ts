@@ -25,6 +25,8 @@ export function generateWorkData(): WorkData {
     ha_organisation_reference: 'a',
     actual_start_date: moment('2019-07-15 00:00').toDate(),
     actual_end_date: moment('2019-07-17 00:00').toDate(),
-    is_ttro_required: false
+    is_ttro_required: false,
+    is_covid_19_response: false,
+    permit_version_id: 1
   }
 }

@@ -1,0 +1,48 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug docker application",
+      "preLaunchTask": "tsc-watch",
+      "port": 9234,
+      "restart": true,
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/opt/app/dft-street-manager-event-notifier",
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug unit tests in current file",
+      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+      "args": [
+        "${relativeFile}"
+      ],
+      "runtimeArgs": [
+        "--nolazy",
+        "-r",
+        "ts-node/register"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug all unit tests",
+      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+      "args": [
+        "${workspaceFolder}/tests/unit/**/*.ts",
+        "${workspaceFolder}/tests/unit/**/*.js"
+      ],
+      "runtimeArgs": [
+        "--nolazy",
+        "-r",
+        "ts-node/register"
+      ],
+      "env": {"TZ": "UTC"}
+    }
+  ]
+}
