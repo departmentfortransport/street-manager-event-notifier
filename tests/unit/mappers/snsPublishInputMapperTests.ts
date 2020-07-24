@@ -16,8 +16,7 @@ describe('SNSPublishInputMapper', () => {
   let eventNotifierSNSMessageMapper: EventNotifierSNSMessageMapper
   let snsPublishInputMapper: SNSPublishInputMapper
   let eventNotifierWorkData: EventNotifierWorkData
-  let startARN: string
-  let stopARN: string
+  let permitARN: string
 
   beforeEach(() => {
     sqsMessage = generateSQSMessage()
@@ -25,13 +24,11 @@ describe('SNSPublishInputMapper', () => {
     eventNotifierWorkData = generateEventNotifierWorkData()
 
     eventNotifierSNSMessageMapper = mock(EventNotifierSNSMessageMapper)
-    startARN = 'START'
-    stopARN = 'STOP'
+    permitARN = 'PERMIT'
 
     snsPublishInputMapper = new SNSPublishInputMapper(
       instance(eventNotifierSNSMessageMapper),
-      startARN,
-      stopARN
+      permitARN
     )
 
     when(eventNotifierSNSMessageMapper.mapToSNSMessage(sqsMessage, eventNotifierWorkData)).thenResolve(snsMessage)
@@ -42,7 +39,7 @@ describe('SNSPublishInputMapper', () => {
       const result: SNS.PublishInput = await snsPublishInputMapper.mapToSNSPublishInput(sqsMessage, eventNotifierWorkData)
 
       assert.equal(result.Message, JSON.stringify(snsMessage))
-      assert.equal(result.TopicArn, startARN)
+      assert.equal(result.TopicArn, permitARN)
       assert.equal(result.MessageAttributes[USRN].StringValue, snsMessage.object_data.usrn)
       assert.equal(result.MessageAttributes[AREA].StringValue, snsMessage.object_data.area_name)
       assert.equal(result.MessageAttributes[HA_ORG].StringValue, snsMessage.object_data.highway_authority_swa_code)
@@ -56,7 +53,7 @@ describe('SNSPublishInputMapper', () => {
       const result: SNS.PublishInput = await snsPublishInputMapper.mapToSNSPublishInput(sqsMessage, eventNotifierWorkData)
 
       assert.equal(result.Message, JSON.stringify(snsMessage))
-      assert.equal(result.TopicArn, startARN)
+      assert.equal(result.TopicArn, permitARN)
       assert.equal(result.MessageAttributes[USRN].StringValue, snsMessage.object_data.usrn)
       assert.isUndefined(result.MessageAttributes[AREA])
       assert.equal(result.MessageAttributes[HA_ORG].StringValue, snsMessage.object_data.highway_authority_swa_code)

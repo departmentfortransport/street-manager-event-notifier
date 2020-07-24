@@ -19,8 +19,7 @@ Resources:
         Variables:
           PGUSER:
           PGPASSWORD:
-          WORKSTARTTOPICARN:
-          WORKSTOPTOPICARN:
+          PERMITTOPICARN:
       Events:
         SQSQueueEvent:
           Type: SQS

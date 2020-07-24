@@ -7,8 +7,7 @@ const TYPES = {
   // AWS
   RDSSigner: Symbol.for('RDSSigner'),
   SNS: Symbol.for('SNS'),
-  WorkStartTopic: Symbol.for('WorkStartTopic'),
-  WorkStopTopic: Symbol.for('WorkStopTopic'),
+  PermitTopic: Symbol.for('PermitTopic'),
 
   // Services
   DBService: Symbol.for('DBService'),
