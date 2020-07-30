@@ -13,8 +13,7 @@ Ensure you have the following environment variables from Keybase added to your .
 
 `PGUSER`
 `PGPASSWORD`
-`WORKSTARTTOPICARN`
-`WORKSTOPTOPICARN`
+`PERMITTOPICARN`
 
 ### 3. Build
 Compile typescript to javascript - output to /dist folder

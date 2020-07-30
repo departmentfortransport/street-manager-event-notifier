@@ -12,8 +12,7 @@ export default class SNSPublishInputMapper {
 
   public constructor(
     @inject(TYPES.EventNotifierSNSMessageMapper) private mapper: EventNotifierSNSMessageMapper,
-    @inject(TYPES.WorkStartTopic) private workStartTopic: string,
-    @inject(TYPES.WorkStopTopic) private workStopTopic: string
+    @inject(TYPES.PermitTopic) private permitTopic: string
   ) {}
 
   public async mapToSNSPublishInput(sqsMessage: EventNotifierSQSMessage, eventNotifierData: EventNotifierWorkData): Promise<SNS.PublishInput> {
@@ -57,13 +56,17 @@ export default class SNSPublishInputMapper {
   }
 
   private getTopic(eventType: EventTypeNotificationEnum): string {
-    switch (eventType) {
-      case EventTypeNotificationEnum.WORK_START:
-        return this.workStartTopic
-      case EventTypeNotificationEnum.WORK_STOP:
-        return this.workStopTopic
-      default:
-        throw new Error(`The following event type is not valid: [${eventType}]`)
+    const permitEventTypes: EventTypeNotificationEnum[] = [
+      EventTypeNotificationEnum.WORK_START,
+      EventTypeNotificationEnum.WORK_STOP,
+      EventTypeNotificationEnum.WORK_START_REVERTED,
+      EventTypeNotificationEnum.WORK_STOP_REVERTED
+    ]
+
+    if (permitEventTypes.includes(eventType)) {
+      return this.permitTopic
     }
+
+    throw new Error(`The following event type is not valid: [${eventType}]`)
   }
 }

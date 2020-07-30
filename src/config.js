@@ -13,6 +13,5 @@ module.exports = {
   PGSSL: (process.env.PGSSL === true || process.env.PGSSL === 'true') || false,
 
   // SNS
-  WORKSTARTTOPICARN: process.env.WORKSTARTTOPICARN,
-  WORKSTOPTOPICARN: process.env.WORKSTOPTOPICARN
+  PERMITTOPICARN: process.env.PERMITTOPICARN
 }

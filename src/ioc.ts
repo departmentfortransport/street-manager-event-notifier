@@ -46,8 +46,7 @@ iocContainer.bind<SNSService>(TYPES.SNSService).to(SNSService)
 
 iocContainer.bind<SNS>(TYPES.SNS).toConstantValue(new SNS())
 
-iocContainer.bind<string>(TYPES.WorkStartTopic).toConstantValue(config.WORKSTARTTOPICARN)
-iocContainer.bind<string>(TYPES.WorkStopTopic).toConstantValue(config.WORKSTOPTOPICARN)
+iocContainer.bind<string>(TYPES.PermitTopic).toConstantValue(config.PERMITTOPICARN)
 
 // Utils
 iocContainer.bind<Logger>(TYPES.Logger).to(Logger)
