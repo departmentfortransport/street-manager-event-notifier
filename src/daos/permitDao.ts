@@ -1,7 +1,5 @@
 import * as Knex from 'knex'
-import { injectable, inject } from 'inversify'
-import TYPES from '../types'
-import DBService from '../services/dbService'
+import { injectable } from 'inversify'
 import * as postgis from 'knex-postgis'
 import { WorkData } from '../models/workData'
 import 'reflect-metadata'
@@ -35,12 +33,7 @@ export default class PermitDao {
     'permit.is_covid_19_response'
   ]
 
-  public constructor (@inject(TYPES.DBService) private db: DBService) {}
-
-  public async getWorkData(permitReferenceNumber: string): Promise<WorkData> {
-    const knex: Knex = await this.db.knex()
-    const knexPostgis: postgis.KnexPostgis = this.db.postgis()
-
+  public async getWorkData(permitReferenceNumber: string, knex: Knex, knexPostgis: postgis.knexPostgis): Promise<WorkData> {
     const query: Knex.QueryBuilder = this.preparePermitsQuery(permitReferenceNumber, knex)
       .select([
         ...this.PERMIT_COLUMNS,

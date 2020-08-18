@@ -28,6 +28,9 @@ describe('PermitObjectMessageService', () => {
 
   let permitObjectMessageService: PermitObjectMessageService
 
+  const KNEX: any = {}
+  const KNEX_POSTGIS: any = {}
+
   before(() => {
     logger = mock(Logger)
     snsService = mock(SNSService)
@@ -55,13 +58,13 @@ describe('PermitObjectMessageService', () => {
       const snsPublishInput: SNS.PublishInput = generatePublishInput()
       const timeReceived: Date = new Date()
 
-      when(permitDao.getWorkData(eventNotifierSQSMessage.object_reference)).thenResolve(workData)
-      when(permitLocationTypeDao.getByPermitVersionId(workData.permit_version_id)).thenResolve(permitLocationTypes)
+      when(permitDao.getWorkData(eventNotifierSQSMessage.object_reference, KNEX, KNEX_POSTGIS)).thenResolve(workData)
+      when(permitLocationTypeDao.getByPermitVersionId(workData.permit_version_id, KNEX)).thenResolve(permitLocationTypes)
       when(workDataMapper.mapWorkDataToEventNotifierWorkData(workData, permitLocationTypes)).thenReturn(eventNotifierWorkData)
       when(snsPublishInputMapper.mapToSNSPublishInput(eventNotifierSQSMessage, eventNotifierWorkData)).thenResolve(snsPublishInput)
       when(snsService.publishMessage(snsPublishInput)).thenResolve()
 
-      await permitObjectMessageService.sendMessageToSNS(eventNotifierSQSMessage, timeReceived)
+      await permitObjectMessageService.sendMessageToSNS(eventNotifierSQSMessage, timeReceived, KNEX, KNEX_POSTGIS)
 
       const argCaptor: ArgCaptor2<string, EventLogMessage> = capture<string, EventLogMessage>(logger.logWithObject)
       const [message, eventLog] = argCaptor.first()

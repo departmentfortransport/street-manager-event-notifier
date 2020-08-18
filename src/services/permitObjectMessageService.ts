@@ -11,6 +11,8 @@ import PermitLocationTypeDao from '../daos/permitLocationTypeDao'
 import WorkDataMapper from '../mappers/workDataMapper'
 import { WorkData } from '../models/workData'
 import { SNS } from 'aws-sdk'
+import * as Knex from 'knex'
+import * as postgis from 'knex-postgis'
 
 export interface EventLogMessage {
   object_reference: string
@@ -31,9 +33,9 @@ export default class PermitObjectMessageService implements ObjectMessageService 
     @inject(TYPES.WorkDataMapper) private workDataMapper: WorkDataMapper
   ) {}
 
-  public async sendMessageToSNS(sqsMessage: EventNotifierSQSMessage, timeReceived: Date): Promise<void> {
+  public async sendMessageToSNS(sqsMessage: EventNotifierSQSMessage, timeReceived: Date, knex: Knex, knexPostgis: postgis.knexPostgis): Promise<void> {
     try {
-      const eventNotifierWorkData: EventNotifierWorkData = await this.getWorkData(sqsMessage.object_reference)
+      const eventNotifierWorkData: EventNotifierWorkData = await this.getWorkData(sqsMessage.object_reference, knex, knexPostgis)
 
       const snsPublishInput: SNS.PublishInput = await this.mapper.mapToSNSPublishInput(sqsMessage, eventNotifierWorkData)
 
@@ -54,10 +56,10 @@ export default class PermitObjectMessageService implements ObjectMessageService 
     }
   }
 
-  private async getWorkData(permitReferenceNumber: string): Promise<EventNotifierWorkData> {
-    const workData: WorkData = await this.permitDao.getWorkData(permitReferenceNumber)
+  private async getWorkData(permitReferenceNumber: string, knex: Knex, knexPostgis: postgis.Knex): Promise<EventNotifierWorkData> {
+    const workData: WorkData = await this.permitDao.getWorkData(permitReferenceNumber, knex, knexPostgis)
 
-    const locationTypes: PermitLocationType[] = await this.permitLocationTypeDao.getByPermitVersionId(workData.permit_version_id)
+    const locationTypes: PermitLocationType[] = await this.permitLocationTypeDao.getByPermitVersionId(workData.permit_version_id, knex)
 
     return await this.workDataMapper.mapWorkDataToEventNotifierWorkData(workData, locationTypes)
   }
