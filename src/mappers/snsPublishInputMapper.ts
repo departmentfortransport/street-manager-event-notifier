@@ -60,7 +60,13 @@ export default class SNSPublishInputMapper {
       EventTypeNotificationEnum.WORK_START,
       EventTypeNotificationEnum.WORK_STOP,
       EventTypeNotificationEnum.WORK_START_REVERTED,
-      EventTypeNotificationEnum.WORK_STOP_REVERTED
+      EventTypeNotificationEnum.WORK_STOP_REVERTED,
+      EventTypeNotificationEnum.PERMIT_GRANTED,
+      EventTypeNotificationEnum.PERMIT_ALTERATION_GRANTED,
+      EventTypeNotificationEnum.PERMIT_CANCELLED,
+      EventTypeNotificationEnum.PERMIT_REVOKED,
+      EventTypeNotificationEnum.PERMIT_SUBMITTED,
+      EventTypeNotificationEnum.PERMIT_REFUSED
     ]
 
     if (permitEventTypes.includes(eventType)) {
