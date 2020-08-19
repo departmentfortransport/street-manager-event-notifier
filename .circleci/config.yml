@@ -19,6 +19,19 @@ aliases:
       echo "export AWS_SECRET_ACCESS_KEY=$(echo $TOKEN | python -c 'import json,sys;print json.load(sys.stdin)["Credentials"]["SecretAccessKey"]' 2> /dev/null)" >> $BASH_ENV
       echo "export AWS_SESSION_TOKEN=$(echo $TOKEN | python -c 'import json,sys;print json.load(sys.stdin)["Credentials"]["SessionToken"]' 2> /dev/null)" >> $BASH_ENV
       echo "export AWS_DEFAULT_REGION=eu-west-2" >> $BASH_ENV
+  - &assume_preview_admin_role
+    name: Assume role on Preview account
+    command: |
+      unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
+      export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID_PREVIEW}"
+      export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY_PREVIEW}"
+      TOKEN=$(aws sts assume-role \
+        --role-arn arn:aws:iam::${AWS_ACCOUNT_PREVIEW}:role/${AWS_ROLE_PREVIEW} \
+        --role-session-name "$(head /dev/urandom | LC_CTYPE=C tr -dc A-Za-z0-9 | head -c 18 ; echo '')"\
+        )
+      echo "export AWS_ACCESS_KEY_ID=$(echo $TOKEN | python -c 'import json,sys;print json.load(sys.stdin)["Credentials"]["AccessKeyId"]' 2> /dev/null)" >> $BASH_ENV
+      echo "export AWS_SECRET_ACCESS_KEY=$(echo $TOKEN | python -c 'import json,sys;print json.load(sys.stdin)["Credentials"]["SecretAccessKey"]' 2> /dev/null)" >> $BASH_ENV
+      echo "export AWS_SESSION_TOKEN=$(echo $TOKEN | python -c 'import json,sys;print json.load(sys.stdin)["Credentials"]["SessionToken"]' 2> /dev/null)" >> $BASH_ENV
   - &assume_preprod_admin_role
     name: Assume role on Preprod account
     command: |
@@ -66,6 +79,9 @@ aliases:
       aws s3 cp s3://${DEV_BUCKET}/${CIRCLE_SHA1}.zip /tmp/lambda
       mv /tmp/lambda/${CIRCLE_SHA1}.zip /tmp/lambda/${CIRCLE_TAG}.zip
       aws s3 cp /tmp/lambda/${CIRCLE_TAG}.zip s3://${DEV_BUCKET}
+  - &push_preview_bucket
+    name: Push preview bucket
+    command: aws s3 cp /tmp/lambda/${CIRCLE_TAG}.zip s3://${PREVIEW_BUCKET}
   - &push_preprod_bucket
     name: Push preprod bucket
     command: aws s3 cp /tmp/lambda/${CIRCLE_TAG}.zip s3://${PREPROD_BUCKET}
@@ -129,6 +145,9 @@ jobs:
       - run: *assume_dev_admin_role
       - run: *ecr_login
       - run: *push_dev_bucket
+      - run: *assume_preview_admin_role
+      - run: *ecr_login
+      - run: *push_preview_bucket
       - run: *assume_preprod_admin_role
       - run: *ecr_login
       - run: *push_preprod_bucket
