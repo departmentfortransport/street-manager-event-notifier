@@ -3,7 +3,7 @@ import { injectable } from 'inversify'
 import { PermitPermitCondition } from 'street-manager-data'
 
 @injectable()
-export default class PermitConditionDao {
+export default class PermitPermitConditionDao {
   private readonly TABLE: string = 'permit_permit_condition'
   private readonly COLUMNS: string[] = [
     'permit_condition_id',

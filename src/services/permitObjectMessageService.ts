@@ -8,7 +8,7 @@ import SNSPublishInputMapper from '../mappers/snsPublishInputMapper'
 import Logger from '../utils/logger'
 import PermitDao from '../daos/permitDao'
 import PermitLocationTypeDao from '../daos/permitLocationTypeDao'
-import PermitConditionDao from '../daos/permitConditionDao'
+import PermitPermitConditionDao from '../daos/permitPermitConditionDao'
 import WorkDataMapper from '../mappers/workDataMapper'
 import { WorkData } from '../models/workData'
 import { SNS } from 'aws-sdk'
@@ -31,7 +31,7 @@ export default class PermitObjectMessageService implements ObjectMessageService 
     @inject(TYPES.SNSPublishInputMapper) private mapper: SNSPublishInputMapper,
     @inject(TYPES.PermitDao) private permitDao: PermitDao,
     @inject(TYPES.PermitLocationTypeDao) private permitLocationTypeDao: PermitLocationTypeDao,
-    @inject(TYPES.PermitConditionDao) private permitConditionDao: PermitConditionDao,
+    @inject(TYPES.PermitPermitConditionDao) private permitPermitConditionDao: PermitPermitConditionDao,
     @inject(TYPES.WorkDataMapper) private workDataMapper: WorkDataMapper
   ) {}
 
@@ -63,7 +63,7 @@ export default class PermitObjectMessageService implements ObjectMessageService 
 
     const [locationTypes, permitConditions] = await Promise.all([
       this.permitLocationTypeDao.getByPermitVersionId(workData.permit_version_id, knex),
-      this.permitConditionDao.getByPermitVersionId(workData.permit_version_id, knex)
+      this.permitPermitConditionDao.getByPermitVersionId(workData.permit_version_id, knex)
     ])
 
     return this.workDataMapper.mapWorkDataToEventNotifierWorkData(workData, locationTypes, permitConditions)

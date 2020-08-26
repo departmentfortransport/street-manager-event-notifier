@@ -8,7 +8,7 @@ import { assert } from 'chai'
 import GeometryService from '../../../src/services/geometryService'
 import { mock, instance, when } from 'ts-mockito'
 import { generatePermitLocationType } from '../../fixtures/permitLocationTypeFixtures'
-import { generatePermitCondition } from '../../fixtures/permitConditionFixtures'
+import { generatePermitPermitCondition } from '../../fixtures/permitConditionFixtures'
 
 describe('WorkDataMapper', () => {
   let workData: WorkData
@@ -26,7 +26,7 @@ describe('WorkDataMapper', () => {
 
     workData = { ...generateWorkData(), permit_coordinates: permitCoordinates }
     permitLocationTypes = [generatePermitLocationType(workData.permit_version_id)]
-    permitConditions = [generatePermitCondition(workData.permit_version_id, RefPermitConditionType.NCT01a), generatePermitCondition(workData.permit_version_id, RefPermitConditionType.NCT02b)]
+    permitConditions = [generatePermitPermitCondition(workData.permit_version_id, RefPermitConditionType.NCT01a), generatePermitPermitCondition(workData.permit_version_id, RefPermitConditionType.NCT02b)]
     workDataMapper = new WorkDataMapper(instance(geometryService))
 
     when(geometryService.parseGeoJSONStringToWKT(permitCoordinates)).thenReturn(permitCoordinatesFormatted)

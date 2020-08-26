@@ -12,13 +12,13 @@ import { ArgCaptor2 } from 'ts-mockito/lib/capture/ArgCaptor'
 import { assert } from 'chai'
 import PermitDao from '../../../src/daos/permitDao'
 import PermitLocationTypeDao from '../../../src/daos/permitLocationTypeDao'
-import PermitConditionDao from '../../../src/daos/permitConditionDao'
+import PermitPermitConditionDao from '../../../src/daos/permitPermitConditionDao'
 import WorkDataMapper from '../../../src/mappers/workDataMapper'
 import { WorkData } from '../../../src/models/workData'
 import { generateWorkData } from '../../fixtures/workDataFixtures'
 import { generatePermitLocationType } from '../../fixtures/permitLocationTypeFixtures'
 import { generateEventNotifierWorkData } from '../../fixtures/eventNotifierWorkDataFixtures'
-import { generatePermitCondition } from '../../fixtures/permitConditionFixtures'
+import { generatePermitPermitCondition } from '../../fixtures/permitConditionFixtures'
 
 describe('PermitObjectMessageService', () => {
   let logger: Logger
@@ -26,7 +26,7 @@ describe('PermitObjectMessageService', () => {
   let snsPublishInputMapper: SNSPublishInputMapper
   let permitDao: PermitDao
   let permitLocationTypeDao: PermitLocationTypeDao
-  let permitConditionDao: PermitConditionDao
+  let permitPermitConditionDao: PermitPermitConditionDao
   let workDataMapper: WorkDataMapper
 
   let permitObjectMessageService: PermitObjectMessageService
@@ -40,7 +40,7 @@ describe('PermitObjectMessageService', () => {
     snsPublishInputMapper = mock(SNSPublishInputMapper)
     permitDao = mock(PermitDao)
     permitLocationTypeDao = mock(PermitLocationTypeDao)
-    permitConditionDao = mock(PermitConditionDao)
+    permitPermitConditionDao = mock(PermitPermitConditionDao)
     workDataMapper = mock(WorkDataMapper)
 
     permitObjectMessageService = new PermitObjectMessageService(
@@ -49,7 +49,7 @@ describe('PermitObjectMessageService', () => {
       instance(snsPublishInputMapper),
       instance(permitDao),
       instance(permitLocationTypeDao),
-      instance(permitConditionDao),
+      instance(permitPermitConditionDao),
       instance(workDataMapper)
     )
   })
@@ -59,14 +59,14 @@ describe('PermitObjectMessageService', () => {
       const eventNotifierSQSMessage: EventNotifierSQSMessage = generateSQSMessage()
       const workData: WorkData = generateWorkData()
       const permitLocationTypes: PermitLocationType[] = [generatePermitLocationType(workData.permit_version_id)]
-      const permitConditions: PermitPermitCondition[] = [generatePermitCondition(workData.permit_version_id)]
+      const permitConditions: PermitPermitCondition[] = [generatePermitPermitCondition(workData.permit_version_id)]
       const eventNotifierWorkData: EventNotifierWorkData = generateEventNotifierWorkData()
       const snsPublishInput: SNS.PublishInput = generatePublishInput()
       const timeReceived: Date = new Date()
 
       when(permitDao.getWorkData(eventNotifierSQSMessage.object_reference, KNEX, KNEX_POSTGIS)).thenResolve(workData)
       when(permitLocationTypeDao.getByPermitVersionId(workData.permit_version_id, KNEX)).thenResolve(permitLocationTypes)
-      when(permitConditionDao.getByPermitVersionId(workData.permit_version_id, KNEX)).thenResolve(permitConditions)
+      when(permitPermitConditionDao.getByPermitVersionId(workData.permit_version_id, KNEX)).thenResolve(permitConditions)
       when(workDataMapper.mapWorkDataToEventNotifierWorkData(workData, permitLocationTypes, permitConditions)).thenReturn(eventNotifierWorkData)
       when(snsPublishInputMapper.mapToSNSPublishInput(eventNotifierSQSMessage, eventNotifierWorkData)).thenResolve(snsPublishInput)
       when(snsService.publishMessage(snsPublishInput)).thenResolve()
