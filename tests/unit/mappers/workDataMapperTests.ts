@@ -1,17 +1,19 @@
 import 'mocha'
 import { WorkData } from '../../../src/models/workData'
 import WorkDataMapper from '../../../src/mappers/workDataMapper'
-import { EventNotifierWorkData, RefWorkStatus, RefWorkCategory, RefTrafficManagementType, PermitLocationType } from 'street-manager-data'
+import { EventNotifierWorkData, RefWorkStatus, RefWorkCategory, RefTrafficManagementType, PermitLocationType, PermitPermitCondition, RefPermitConditionType } from 'street-manager-data'
 import { generateWorkData } from '../../fixtures/workDataFixtures'
-import { worksStatusFilter, trafficManagementTypeFilter, activityTypeFilter, worksCategoryFilter, booleanFilter } from '../../../src/filters'
+import { worksStatusFilter, trafficManagementTypeFilter, activityTypeFilter, worksCategoryFilter, booleanFilter, permitStatusFilter } from '../../../src/filters'
 import { assert } from 'chai'
 import GeometryService from '../../../src/services/geometryService'
 import { mock, instance, when } from 'ts-mockito'
 import { generatePermitLocationType } from '../../fixtures/permitLocationTypeFixtures'
+import { generatePermitCondition } from '../../fixtures/permitConditionFixtures'
 
 describe('WorkDataMapper', () => {
   let workData: WorkData
   let permitLocationTypes: PermitLocationType[]
+  let permitConditions: PermitPermitCondition[]
 
   let workDataMapper: WorkDataMapper
   let geometryService: GeometryService
@@ -24,6 +26,7 @@ describe('WorkDataMapper', () => {
 
     workData = { ...generateWorkData(), permit_coordinates: permitCoordinates }
     permitLocationTypes = [generatePermitLocationType(workData.permit_version_id)]
+    permitConditions = [generatePermitCondition(workData.permit_version_id, RefPermitConditionType.NCT01a), generatePermitCondition(workData.permit_version_id, RefPermitConditionType.NCT02b)]
     workDataMapper = new WorkDataMapper(instance(geometryService))
 
     when(geometryService.parseGeoJSONStringToWKT(permitCoordinates)).thenReturn(permitCoordinatesFormatted)
@@ -31,7 +34,7 @@ describe('WorkDataMapper', () => {
 
   describe('mapWorkDataToEventNotifierWorkData', () => {
     it('should map the work data to event notifier work data', () => {
-      const eventNotifierWorkData: EventNotifierWorkData = workDataMapper.mapWorkDataToEventNotifierWorkData(workData, permitLocationTypes)
+      const eventNotifierWorkData: EventNotifierWorkData = workDataMapper.mapWorkDataToEventNotifierWorkData(workData, permitLocationTypes, permitConditions)
 
       assert.equal(eventNotifierWorkData.work_reference_number, workData.work_reference_number)
       assert.equal(eventNotifierWorkData.permit_reference_number, workData.permit_reference_number)
@@ -59,6 +62,12 @@ describe('WorkDataMapper', () => {
       assert.equal(eventNotifierWorkData.is_ttro_required, booleanFilter(workData.is_ttro_required))
       assert.equal(eventNotifierWorkData.is_covid_19_response, booleanFilter(workData.is_covid_19_response))
       assert.equal(eventNotifierWorkData.works_location_type, 'Footway')
+      assert.equal(eventNotifierWorkData.permit_conditions, 'NCT01a, NCT02b')
+      assert.equal(eventNotifierWorkData.road_category, workData.road_category)
+      assert.equal(eventNotifierWorkData.is_traffic_sensitive, booleanFilter(workData.is_traffic_sensitive))
+      assert.equal(eventNotifierWorkData.is_deemed, booleanFilter(workData.is_deemed))
+      assert.equal(eventNotifierWorkData.permit_status, permitStatusFilter(workData.permit_status_id))
+      assert.equal(eventNotifierWorkData.town, workData.town)
     })
   })
 })

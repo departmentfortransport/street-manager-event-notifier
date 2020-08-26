@@ -27,6 +27,11 @@ export function generateWorkData(): WorkData {
     actual_end_date: moment('2019-07-17 00:00').toDate(),
     is_ttro_required: false,
     is_covid_19_response: false,
+    road_category: 4,
+    is_traffic_sensitive: false,
+    is_deemed: true,
+    permit_status_id: 2,
+    town: 'some town',
     permit_version_id: 1
   }
 }
