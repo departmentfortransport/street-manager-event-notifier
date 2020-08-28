@@ -27,6 +27,12 @@ export function generateEventNotifierWorkData(): EventNotifierWorkData {
     activity_type: 'Core Sampling',
     is_ttro_required: 'No',
     is_covid_19_response: 'No',
-    works_location_type: 'Footway'
+    works_location_type: 'Footway',
+    permit_conditions: 'NCT01a',
+    road_category: '4',
+    is_traffic_sensitive: 'No',
+    is_deemed: 'Yes',
+    permit_status: 'granted',
+    town: 'Some Town'
   }
 }

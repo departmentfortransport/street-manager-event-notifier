@@ -1,4 +1,4 @@
-import { RefWorkCategory } from 'street-manager-data'
+import { RefWorkCategory, RefPermitConditionType, RefPermitStatus } from 'street-manager-data'
 
 export function booleanFilter(value: boolean | string): string {
   if (value === true || value === 'true') {
@@ -94,6 +94,14 @@ enum LocationType {
 
 export function locationTypeFilter(locationTypeId: number): string {
   return LocationType[locationTypeId]
+}
+
+export function permitStatusFilter(permitStatusId: number): string {
+  return RefPermitStatus[permitStatusId]
+}
+
+export function permitConditionFilter(permitConditionId: number): string {
+  return RefPermitConditionType[permitConditionId]
 }
 
 export function coordinateFilter(value: number): string {

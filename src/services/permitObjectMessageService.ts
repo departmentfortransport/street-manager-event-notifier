@@ -2,12 +2,13 @@ import 'reflect-metadata'
 import { injectable, inject } from 'inversify'
 import TYPES from '../types'
 import ObjectMessageService from '../models/objectMessageService'
-import { EventNotifierSQSMessage, PermitLocationType, EventNotifierWorkData } from 'street-manager-data'
+import { EventNotifierSQSMessage, EventNotifierWorkData } from 'street-manager-data'
 import SNSService from './aws/snsService'
 import SNSPublishInputMapper from '../mappers/snsPublishInputMapper'
 import Logger from '../utils/logger'
 import PermitDao from '../daos/permitDao'
 import PermitLocationTypeDao from '../daos/permitLocationTypeDao'
+import PermitPermitConditionDao from '../daos/permitPermitConditionDao'
 import WorkDataMapper from '../mappers/workDataMapper'
 import { WorkData } from '../models/workData'
 import { SNS } from 'aws-sdk'
@@ -30,6 +31,7 @@ export default class PermitObjectMessageService implements ObjectMessageService 
     @inject(TYPES.SNSPublishInputMapper) private mapper: SNSPublishInputMapper,
     @inject(TYPES.PermitDao) private permitDao: PermitDao,
     @inject(TYPES.PermitLocationTypeDao) private permitLocationTypeDao: PermitLocationTypeDao,
+    @inject(TYPES.PermitPermitConditionDao) private permitPermitConditionDao: PermitPermitConditionDao,
     @inject(TYPES.WorkDataMapper) private workDataMapper: WorkDataMapper
   ) {}
 
@@ -59,8 +61,11 @@ export default class PermitObjectMessageService implements ObjectMessageService 
   private async getWorkData(permitReferenceNumber: string, knex: Knex, knexPostgis: postgis.Knex): Promise<EventNotifierWorkData> {
     const workData: WorkData = await this.permitDao.getWorkData(permitReferenceNumber, knex, knexPostgis)
 
-    const locationTypes: PermitLocationType[] = await this.permitLocationTypeDao.getByPermitVersionId(workData.permit_version_id, knex)
+    const [locationTypes, permitConditions] = await Promise.all([
+      this.permitLocationTypeDao.getByPermitVersionId(workData.permit_version_id, knex),
+      this.permitPermitConditionDao.getByPermitVersionId(workData.permit_version_id, knex)
+    ])
 
-    return await this.workDataMapper.mapWorkDataToEventNotifierWorkData(workData, locationTypes)
+    return this.workDataMapper.mapWorkDataToEventNotifierWorkData(workData, locationTypes, permitConditions)
   }
 }

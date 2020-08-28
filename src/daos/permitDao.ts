@@ -30,7 +30,12 @@ export default class PermitDao {
     'work.usrn',
     'permit_version.activity_type_id',
     'permit_version.is_ttro_required',
-    'permit.is_covid_19_response'
+    'permit.is_covid_19_response',
+    'work.road_category',
+    'permit_version.is_traffic_sensitive',
+    'permit.is_deemed',
+    'permit.permit_status_id',
+    'work.town'
   ]
 
   public async getWorkData(permitReferenceNumber: string, knex: Knex, knexPostgis: postgis.knexPostgis): Promise<WorkData> {

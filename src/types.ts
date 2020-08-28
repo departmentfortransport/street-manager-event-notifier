@@ -20,6 +20,7 @@ const TYPES = {
   // DAOs
   PermitDao: Symbol.for('PermitDao'),
   PermitLocationTypeDao: Symbol.for('PermitLocationTypeDao'),
+  PermitPermitConditionDao: Symbol.for('PermitPermitConditionDao'),
 
   // Mappers
   WorkDataMapper: Symbol.for('WorkDataMapper'),

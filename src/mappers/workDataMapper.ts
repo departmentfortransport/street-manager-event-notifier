@@ -1,8 +1,8 @@
 import 'reflect-metadata'
 import { injectable, inject } from 'inversify'
 import { WorkData } from '../models/workData'
-import { EventNotifierWorkData, RefWorkStatus, RefWorkCategory, RefTrafficManagementType, PermitLocationType } from 'street-manager-data'
-import { worksCategoryFilter, trafficManagementTypeFilter, worksStatusFilter, asOptionalDateTime, asOptionalTime, booleanFilter, activityTypeFilter, locationTypeFilter } from '../filters'
+import { EventNotifierWorkData, RefWorkStatus, RefWorkCategory, RefTrafficManagementType, PermitLocationType, PermitPermitCondition } from 'street-manager-data'
+import { worksCategoryFilter, trafficManagementTypeFilter, worksStatusFilter, asOptionalDateTime, asOptionalTime, booleanFilter, activityTypeFilter, locationTypeFilter, permitConditionFilter, permitStatusFilter } from '../filters'
 import GeometryService from '../services/geometryService'
 import TYPES from '../types'
 
@@ -11,7 +11,7 @@ export default class WorkDataMapper {
 
   public constructor(@inject(TYPES.GeometryService) private geometryService: GeometryService) {}
 
-  public mapWorkDataToEventNotifierWorkData(workData: WorkData, locationTypes: PermitLocationType[]): EventNotifierWorkData {
+  public mapWorkDataToEventNotifierWorkData(workData: WorkData, locationTypes: PermitLocationType[], permitConditions: PermitPermitCondition[]): EventNotifierWorkData {
     return {
       work_reference_number: workData.work_reference_number,
       permit_reference_number: workData.permit_reference_number,
@@ -38,7 +38,13 @@ export default class WorkDataMapper {
       activity_type: activityTypeFilter(workData.activity_type_id),
       is_ttro_required: booleanFilter(workData.is_ttro_required),
       is_covid_19_response: workData.is_covid_19_response !== null ? booleanFilter(workData.is_covid_19_response) : null,
-      works_location_type: locationTypes ? this.mapWorksLocationTypesToString(locationTypes) : null
+      works_location_type: locationTypes ? this.mapWorksLocationTypesToString(locationTypes) : null,
+      permit_conditions: permitConditions ? this.mapPermitConditionCodesToString(permitConditions) : null,
+      road_category: workData.road_category.toString(),
+      is_traffic_sensitive: booleanFilter(workData.is_traffic_sensitive),
+      is_deemed: booleanFilter(workData.is_deemed),
+      permit_status: permitStatusFilter(workData.permit_status_id),
+      town: workData.town
     }
   }
 
@@ -46,5 +52,11 @@ export default class WorkDataMapper {
     const permitLocationTypesAsArray: string[] = permitLocationTypes.map((permitLocationType: PermitLocationType) => locationTypeFilter(permitLocationType.location_type_id))
 
     return permitLocationTypesAsArray.join(', ')
+  }
+
+  private mapPermitConditionCodesToString(permitConditions: PermitPermitCondition[]): string {
+    const permitConditionCodesAsArray: string[] = permitConditions.map((condition: PermitPermitCondition) => permitConditionFilter(condition.permit_condition_id))
+
+    return permitConditionCodesAsArray.join(', ')
   }
 }

@@ -24,4 +24,9 @@ export interface WorkData {
   is_ttro_required: boolean
   is_covid_19_response?: boolean
   permit_version_id?: number
+  road_category: number
+  is_traffic_sensitive: false
+  is_deemed: boolean
+  permit_status_id: number
+  town?: string
 }
