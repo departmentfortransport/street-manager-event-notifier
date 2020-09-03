@@ -20,6 +20,7 @@ Resources:
           PGUSER:
           PGPASSWORD:
           PERMITTOPICARN:
+          ACTIVITYTOPICARN:
       Events:
         SQSQueueEvent:
           Type: SQS

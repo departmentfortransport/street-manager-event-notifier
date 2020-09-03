@@ -1,13 +1,13 @@
 import 'reflect-metadata'
 import { injectable } from 'inversify'
-import { EventNotifierSNSMessage, EventNotifierSQSMessage, EventNotifierWorkData } from 'street-manager-data'
+import { EventNotifierSNSMessage, EventNotifierSQSMessage, EventNotifierWorkData, EventNotifierActivityData } from 'street-manager-data'
 
 @injectable()
 export default class EventNotifierSNSMessageMapper {
 
   private readonly SNS_MESSAGE_VERSION = 1
 
-  public async mapToSNSMessage(sqsMessage: EventNotifierSQSMessage, eventNotifierData: EventNotifierWorkData): Promise<EventNotifierSNSMessage> {
+  public mapToSNSMessage(sqsMessage: EventNotifierSQSMessage, eventNotifierData: EventNotifierWorkData | EventNotifierActivityData): EventNotifierSNSMessage {
     return {
       event_reference: sqsMessage.event_reference,
       event_type: sqsMessage.event_type,

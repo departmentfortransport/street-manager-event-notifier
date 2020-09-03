@@ -18,6 +18,12 @@ import SNSPublishInputMapper from './mappers/snsPublishInputMapper'
 import GeometryService from './services/geometryService'
 import PermitLocationTypeDao from './daos/permitLocationTypeDao'
 import PermitPermitConditionDao from './daos/permitPermitConditionDao'
+import SNSMessageAttributeMapper from './mappers/snsMessageAttributeMapper'
+import ActivityObjectMessageService from './services/activityObjectMessageService'
+import ActivityDao from './daos/activityDao'
+import ActivityLocationTypeDao from './daos/activityLocationTypeDao'
+import ActivityDataMapper from './mappers/activityDataMapper'
+import EventLogMapper from './mappers/eventLogMapper'
 
 const iocContainer = new Container()
 
@@ -32,6 +38,9 @@ iocContainer.bind<PermitDao>(TYPES.PermitDao).to(PermitDao)
 iocContainer.bind<PermitLocationTypeDao>(TYPES.PermitLocationTypeDao).to(PermitLocationTypeDao)
 iocContainer.bind<PermitPermitConditionDao>(TYPES.PermitPermitConditionDao).to(PermitPermitConditionDao)
 iocContainer.bind<GeometryService>(TYPES.GeometryService).to(GeometryService)
+iocContainer.bind<ActivityObjectMessageService>(TYPES.ActivityObjectMessageService).to(ActivityObjectMessageService)
+iocContainer.bind<ActivityDao>(TYPES.ActivityDao).to(ActivityDao)
+iocContainer.bind<ActivityLocationTypeDao>(TYPES.ActivityLocationTypeDao).to(ActivityLocationTypeDao)
 
 // AWS
 iocContainer.bind<RDSService>(TYPES.RDSService).to(RDSService)
@@ -49,13 +58,17 @@ iocContainer.bind<SNSService>(TYPES.SNSService).to(SNSService)
 iocContainer.bind<SNS>(TYPES.SNS).toConstantValue(new SNS())
 
 iocContainer.bind<string>(TYPES.PermitTopic).toConstantValue(config.PERMITTOPICARN)
+iocContainer.bind<string>(TYPES.ActivityTopic).toConstantValue(config.ACTIVITYTOPICARN)
 
 // Utils
 iocContainer.bind<Logger>(TYPES.Logger).to(Logger)
 
 // Mappers
 iocContainer.bind<WorkDataMapper>(TYPES.WorkDataMapper).to(WorkDataMapper)
+iocContainer.bind<ActivityDataMapper>(TYPES.ActivityDataMapper).to(ActivityDataMapper)
 iocContainer.bind<EventNotifierSNSMessageMapper>(TYPES.EventNotifierSNSMessageMapper).to(EventNotifierSNSMessageMapper)
 iocContainer.bind<SNSPublishInputMapper>(TYPES.SNSPublishInputMapper).to(SNSPublishInputMapper)
+iocContainer.bind<SNSMessageAttributeMapper>(TYPES.SNSMessageAttributeMapper).to(SNSMessageAttributeMapper)
+iocContainer.bind<EventLogMapper>(TYPES.EventLogMapper).to(EventLogMapper)
 
 export default iocContainer

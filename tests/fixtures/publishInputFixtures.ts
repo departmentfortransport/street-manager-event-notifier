@@ -9,11 +9,15 @@ export function generatePublishInput(): SNS.PublishInput {
   return {
     Message: JSON.stringify(snsMessage),
     TopicArn: 'work-start',
-    MessageAttributes: {
-      [USRN] : {
-        DataType: 'Number',
-        StringValue: snsMessage.object_data.usrn
-      }
+    MessageAttributes: generateMessageAttributes()
+  }
+}
+
+export function generateMessageAttributes(): SNS.MessageAttributeMap {
+  return {
+    [USRN] : {
+      DataType: 'Number',
+      StringValue: '100001'
     }
   }
 }

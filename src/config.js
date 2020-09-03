@@ -13,5 +13,6 @@ module.exports = {
   PGSSL: (process.env.PGSSL === true || process.env.PGSSL === 'true') || false,
 
   // SNS
-  PERMITTOPICARN: process.env.PERMITTOPICARN
+  PERMITTOPICARN: process.env.PERMITTOPICARN,
+  ACTIVITYTOPICARN: process.env.ACTIVITYTOPICARN
 }

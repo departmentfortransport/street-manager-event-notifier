@@ -14,13 +14,10 @@ import { WorkData } from '../models/workData'
 import { SNS } from 'aws-sdk'
 import * as Knex from 'knex'
 import * as postgis from 'knex-postgis'
-
-export interface EventLogMessage {
-  object_reference: string
-  event_reference: number
-  time_message_received: Date
-  time_message_sent: Date
-}
+import { MessageAttributeMap } from 'aws-sdk/clients/sns'
+import SNSMessageAttributeMapper from '../mappers/snsMessageAttributeMapper'
+import EventNotifierSNSMessageMapper from '../mappers/eventNotifierSNSMessageMapper'
+import EventLogMapper from '../mappers/eventLogMapper'
 
 @injectable()
 export default class PermitObjectMessageService implements ObjectMessageService {
@@ -28,33 +25,40 @@ export default class PermitObjectMessageService implements ObjectMessageService 
   public constructor(
     @inject(TYPES.Logger) private logger: Logger,
     @inject(TYPES.SNSService) private snsService: SNSService,
-    @inject(TYPES.SNSPublishInputMapper) private mapper: SNSPublishInputMapper,
+    @inject(TYPES.SNSPublishInputMapper) private snsPublishInputMapper: SNSPublishInputMapper,
     @inject(TYPES.PermitDao) private permitDao: PermitDao,
     @inject(TYPES.PermitLocationTypeDao) private permitLocationTypeDao: PermitLocationTypeDao,
     @inject(TYPES.PermitPermitConditionDao) private permitPermitConditionDao: PermitPermitConditionDao,
-    @inject(TYPES.WorkDataMapper) private workDataMapper: WorkDataMapper
+    @inject(TYPES.WorkDataMapper) private workDataMapper: WorkDataMapper,
+    @inject(TYPES.PermitTopic) private permitTopic: string,
+    @inject(TYPES.EventNotifierSNSMessageMapper) private eventNotifierSNSMessageMapper: EventNotifierSNSMessageMapper,
+    @inject(TYPES.SNSMessageAttributeMapper) private attributeMapper: SNSMessageAttributeMapper,
+    @inject(TYPES.EventLogMapper) private eventLogMapper: EventLogMapper
   ) {}
 
   public async sendMessageToSNS(sqsMessage: EventNotifierSQSMessage, timeReceived: Date, knex: Knex, knexPostgis: postgis.knexPostgis): Promise<void> {
     try {
       const eventNotifierWorkData: EventNotifierWorkData = await this.getWorkData(sqsMessage.object_reference, knex, knexPostgis)
 
-      const snsPublishInput: SNS.PublishInput = await this.mapper.mapToSNSPublishInput(sqsMessage, eventNotifierWorkData)
+      const messageAttributes: MessageAttributeMap = this.attributeMapper.mapMessageAttributes(
+        eventNotifierWorkData.usrn,
+        eventNotifierWorkData.highway_authority,
+        eventNotifierWorkData.activity_type,
+        eventNotifierWorkData.area_name,
+        eventNotifierWorkData.promoter_organisation
+      )
+
+      const snsPublishInput: SNS.PublishInput = this.snsPublishInputMapper.mapToSNSPublishInput(
+        this.eventNotifierSNSMessageMapper.mapToSNSMessage(sqsMessage, eventNotifierWorkData),
+        this.permitTopic,
+        messageAttributes
+      )
 
       await this.snsService.publishMessage(snsPublishInput)
 
-      this.logger.logWithObject('Message successfully sent to SNS:', this.generateLogMessage(sqsMessage, timeReceived))
+      this.logger.logWithObject('Message successfully sent to SNS:', this.eventLogMapper.generateEventLogMessage(sqsMessage, timeReceived))
     } catch (err) {
       return Promise.reject(err)
-    }
-  }
-
-  private generateLogMessage(message: EventNotifierSQSMessage, timeReceived: Date): EventLogMessage {
-    return {
-      object_reference: message.object_reference,
-      event_reference: message.event_reference,
-      time_message_received: timeReceived,
-      time_message_sent: new Date()
     }
   }
 
