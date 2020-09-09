@@ -1,78 +1,16 @@
 import 'reflect-metadata'
-import { injectable, inject } from 'inversify'
-import TYPES from '../types'
-import EventNotifierSNSMessageMapper from './eventNotifierSNSMessageMapper'
-import { EventNotifierWorkData, EventNotifierSNSMessage, EventTypeNotificationEnum, EventNotifierSQSMessage } from 'street-manager-data'
+import { injectable } from 'inversify'
+import { EventNotifierSNSMessage } from 'street-manager-data'
 import { SNS } from 'aws-sdk'
-import { USRN, AREA, HA_ORG, PROMOTER_ORG, ACTIVITY_TYPE } from '../constants/snsMessageAttributes'
 import { MessageAttributeMap } from 'aws-sdk/clients/sns'
 
 @injectable()
 export default class SNSPublishInputMapper {
-
-  public constructor(
-    @inject(TYPES.EventNotifierSNSMessageMapper) private mapper: EventNotifierSNSMessageMapper,
-    @inject(TYPES.PermitTopic) private permitTopic: string
-  ) {}
-
-  public async mapToSNSPublishInput(sqsMessage: EventNotifierSQSMessage, eventNotifierData: EventNotifierWorkData): Promise<SNS.PublishInput> {
-    const snsMessage: EventNotifierSNSMessage = await this.mapper.mapToSNSMessage(sqsMessage, eventNotifierData)
-
+  public mapToSNSPublishInput(message: EventNotifierSNSMessage, topic: string, attributes?: MessageAttributeMap): SNS.PublishInput {
     return {
-      Message: JSON.stringify(snsMessage),
-      TopicArn: this.getTopic(snsMessage.event_type),
-      MessageAttributes: this.generateMessageAttributes(snsMessage.object_data)
+      Message: JSON.stringify(message),
+      TopicArn: topic,
+      MessageAttributes: attributes
     }
-  }
-
-  private generateMessageAttributes(workData: EventNotifierWorkData): MessageAttributeMap {
-    const attributes: MessageAttributeMap = {
-      [USRN] : {
-        DataType: 'Number',
-        StringValue: workData.usrn
-      },
-      [HA_ORG]: {
-        DataType: 'String',
-        StringValue: workData.highway_authority_swa_code
-      },
-      [PROMOTER_ORG]: {
-        DataType: 'String',
-        StringValue: workData.promoter_swa_code
-      },
-      [ACTIVITY_TYPE]: {
-        DataType: 'String',
-        StringValue: workData.activity_type
-      }
-    }
-
-    if (workData.area_name) {
-      attributes[AREA] = {
-          DataType: 'String',
-          StringValue: workData.area_name
-      }
-    }
-
-    return attributes
-  }
-
-  private getTopic(eventType: EventTypeNotificationEnum): string {
-    const permitEventTypes: EventTypeNotificationEnum[] = [
-      EventTypeNotificationEnum.WORK_START,
-      EventTypeNotificationEnum.WORK_STOP,
-      EventTypeNotificationEnum.WORK_START_REVERTED,
-      EventTypeNotificationEnum.WORK_STOP_REVERTED,
-      EventTypeNotificationEnum.PERMIT_GRANTED,
-      EventTypeNotificationEnum.PERMIT_ALTERATION_GRANTED,
-      EventTypeNotificationEnum.PERMIT_CANCELLED,
-      EventTypeNotificationEnum.PERMIT_REVOKED,
-      EventTypeNotificationEnum.PERMIT_SUBMITTED,
-      EventTypeNotificationEnum.PERMIT_REFUSED
-    ]
-
-    if (permitEventTypes.includes(eventType)) {
-      return this.permitTopic
-    }
-
-    throw new Error(`The following event type is not valid: [${eventType}]`)
   }
 }

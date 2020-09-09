@@ -18,7 +18,7 @@ describe('EventNotifierSNSMessageMapper', () => {
 
   describe('mapSQSToSNSMessage', () => {
     it('should map the sqs message to an sns message', async () => {
-      const eventNotifierSNSMessage: EventNotifierSNSMessage = await eventNotifierSNSMessageMapper.mapToSNSMessage(sqsMessage, eventNotifierWorkData)
+      const eventNotifierSNSMessage: EventNotifierSNSMessage = eventNotifierSNSMessageMapper.mapToSNSMessage(sqsMessage, eventNotifierWorkData)
 
       assert.equal(eventNotifierSNSMessage.event_reference, sqsMessage.event_reference)
       assert.equal(eventNotifierSNSMessage.event_type, sqsMessage.event_type)

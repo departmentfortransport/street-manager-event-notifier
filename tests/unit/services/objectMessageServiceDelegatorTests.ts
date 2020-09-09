@@ -5,17 +5,21 @@ import { ObjectTypeNotificationEnum } from 'street-manager-data'
 import ObjectMessageServiceDelegator from '../../../src/services/objectMessageServiceDelegator'
 import PermitObjectMessageService from '../../../src/services/permitObjectMessageService'
 import ObjectMessageService from '../../../src/models/objectMessageService'
+import ActivityObjectMessageService from '../../../src/services/activityObjectMessageService'
 
 describe('ObjectMessageServiceDelegator', () => {
 
   let objectMessageServiceDelegator: ObjectMessageServiceDelegator
   let permitObjectMessageService: PermitObjectMessageService
+  let activityObjectMessageService: ActivityObjectMessageService
 
   before(() => {
     permitObjectMessageService = mock(PermitObjectMessageService)
+    activityObjectMessageService = mock(ActivityObjectMessageService)
 
     objectMessageServiceDelegator = new ObjectMessageServiceDelegator(
-      permitObjectMessageService
+      permitObjectMessageService,
+      activityObjectMessageService
     )
   })
 
@@ -24,6 +28,12 @@ describe('ObjectMessageServiceDelegator', () => {
       const result: ObjectMessageService = objectMessageServiceDelegator.getObjectMessageService(ObjectTypeNotificationEnum.PERMIT)
 
       assert.equal(result, permitObjectMessageService)
+    })
+
+    it('should return the activity object message service when the object type is Activity', () => {
+      const result: ObjectMessageService = objectMessageServiceDelegator.getObjectMessageService(ObjectTypeNotificationEnum.ACTIVITY)
+
+      assert.equal(result, activityObjectMessageService)
     })
 
     it('should throw an error if an invalid object type is provided', () => {

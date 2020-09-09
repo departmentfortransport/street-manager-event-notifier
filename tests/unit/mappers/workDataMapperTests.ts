@@ -63,7 +63,7 @@ describe('WorkDataMapper', () => {
       assert.equal(eventNotifierWorkData.is_covid_19_response, booleanFilter(workData.is_covid_19_response))
       assert.equal(eventNotifierWorkData.works_location_type, 'Footway')
       assert.equal(eventNotifierWorkData.permit_conditions, 'NCT01a, NCT02b')
-      assert.equal(eventNotifierWorkData.road_category, workData.road_category)
+      assert.equal(eventNotifierWorkData.road_category, workData.road_category.toString())
       assert.equal(eventNotifierWorkData.is_traffic_sensitive, booleanFilter(workData.is_traffic_sensitive))
       assert.equal(eventNotifierWorkData.is_deemed, booleanFilter(workData.is_deemed))
       assert.equal(eventNotifierWorkData.permit_status, permitStatusFilter(workData.permit_status_id))
