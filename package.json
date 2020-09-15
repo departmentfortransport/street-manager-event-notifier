@@ -17,6 +17,7 @@
     "inversify": "^5.0.1",
     "knex": "^0.20.15",
     "knex-postgis": "^0.7.0",
+    "lodash": "^4.17.20",
     "moment-timezone": "^0.5.31",
     "pg": "^7.18.2",
     "reflect-metadata": "^0.1.13",
