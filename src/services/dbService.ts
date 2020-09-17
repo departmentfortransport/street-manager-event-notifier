@@ -33,7 +33,7 @@ export default class DBService {
 
   public async destroy(): Promise<void> {
     if (this.connection) {
-      this.connection.destroy()
+      await this.connection.destroy()
     }
   }
 
