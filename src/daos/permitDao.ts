@@ -1,6 +1,6 @@
 import * as Knex from 'knex'
 import { injectable } from 'inversify'
-import * as postgis from 'knex-postgis'
+import { KnexPostgis } from 'knex-postgis'
 import { WorkData } from '../models/workData'
 import 'reflect-metadata'
 
@@ -38,7 +38,7 @@ export default class PermitDao {
     'work.town'
   ]
 
-  public async getWorkData(permitReferenceNumber: string, knex: Knex, knexPostgis: postgis.knexPostgis): Promise<WorkData> {
+  public async getWorkData(permitReferenceNumber: string, knex: Knex, knexPostgis: KnexPostgis): Promise<WorkData> {
     const query: Knex.QueryBuilder = this.preparePermitsQuery(permitReferenceNumber, knex)
       .select([
         ...this.PERMIT_COLUMNS,

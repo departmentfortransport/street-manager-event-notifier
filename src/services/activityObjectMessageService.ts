@@ -12,7 +12,7 @@ import ActivityDataMapper from '../mappers/activityDataMapper'
 import { ActivityData } from '../models/activityData'
 import { SNS } from 'aws-sdk'
 import * as Knex from 'knex'
-import * as postgis from 'knex-postgis'
+import { KnexPostgis } from 'knex-postgis'
 import SNSMessageAttributeMapper from '../mappers/snsMessageAttributeMapper'
 import { MessageAttributeMap } from 'aws-sdk/clients/sns'
 import EventNotifierSNSMessageMapper from '../mappers/eventNotifierSNSMessageMapper'
@@ -34,7 +34,7 @@ export default class ActivityObjectMessageService implements ObjectMessageServic
     @inject(TYPES.EventLogMapper) private eventLogMapper: EventLogMapper
   ) {}
 
-  public async sendMessageToSNS(sqsMessage: EventNotifierSQSMessage, timeReceived: Date, knex: Knex, knexPostgis: postgis.knexPostgis): Promise<void> {
+  public async sendMessageToSNS(sqsMessage: EventNotifierSQSMessage, timeReceived: Date, knex: Knex, knexPostgis: KnexPostgis): Promise<void> {
     try {
       const eventNotifierActivityData: EventNotifierActivityData = await this.getActivityData(sqsMessage.object_reference, knex, knexPostgis)
 
@@ -59,7 +59,7 @@ export default class ActivityObjectMessageService implements ObjectMessageServic
     }
   }
 
-  private async getActivityData(activityReferenceNumber: string, knex: Knex, knexPostgis: postgis.Knex): Promise<EventNotifierActivityData> {
+  private async getActivityData(activityReferenceNumber: string, knex: Knex, knexPostgis: KnexPostgis): Promise<EventNotifierActivityData> {
     const activityData: ActivityData = await this.activityDao.getActivityData(activityReferenceNumber, knex, knexPostgis)
     const locationTypes: ActivityLocationType[] = await this.activityLocationTypeDao.getActivityLocationTypeByActivityId(activityData.activity_id, knex)
 

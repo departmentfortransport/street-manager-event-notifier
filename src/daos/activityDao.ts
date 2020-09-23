@@ -1,6 +1,6 @@
 import * as Knex from 'knex'
 import { injectable } from 'inversify'
-import * as postgis from 'knex-postgis'
+import { KnexPostgis } from 'knex-postgis'
 import 'reflect-metadata'
 import { ActivityData } from '../models/activityData'
 
@@ -30,7 +30,7 @@ export default class ActivityDao {
     'ha_organisation.organisation_name as ha_organisation_name'
   ]
 
-  public async getActivityData(activityReferenceNumber: string, knex: Knex, knexPostgis: postgis.knexPostgis): Promise<ActivityData> {
+  public async getActivityData(activityReferenceNumber: string, knex: Knex, knexPostgis: KnexPostgis): Promise<ActivityData> {
     const query: Knex.QueryBuilder = this.prepareActivityQuery(activityReferenceNumber, knex)
       .select([
         ...this.ACTIVITY_COLUMNS,
