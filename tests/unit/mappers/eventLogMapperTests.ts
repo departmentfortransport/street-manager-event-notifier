@@ -9,7 +9,7 @@ describe('EventLogMapper', () => {
   const eventLogMapper: EventLogMapper = new EventLogMapper()
 
   describe('generateEventLogMessage', () => {
-    it('should map SQS message properties, time received & time sent to EventLogMessage', async () => {
+    it('should map SQS message properties, time received & time sent to EventLogMessage', () => {
       const eventNotifierSQSMessage: EventNotifierSQSMessage = generateSQSMessage()
       const timeReceived: Date = new Date()
 

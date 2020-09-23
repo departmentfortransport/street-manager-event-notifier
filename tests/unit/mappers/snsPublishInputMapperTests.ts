@@ -22,7 +22,7 @@ describe('SNSPublishInputMapper', () => {
   })
 
   describe('mapSQSToPublishInput', () => {
-    it('should map the sqs message to an AWS publish input object', async () => {
+    it('should map the sqs message to an AWS publish input object', () => {
       const result: SNS.PublishInput = snsPublishInputMapper.mapToSNSPublishInput(snsMessage, permitARN, messageAttributes)
 
       assert.equal(result.Message, JSON.stringify(snsMessage))
