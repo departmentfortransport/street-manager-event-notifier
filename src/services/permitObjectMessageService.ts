@@ -13,7 +13,7 @@ import WorkDataMapper from '../mappers/workDataMapper'
 import { WorkData } from '../models/workData'
 import { SNS } from 'aws-sdk'
 import * as Knex from 'knex'
-import * as postgis from 'knex-postgis'
+import { KnexPostgis } from 'knex-postgis'
 import { MessageAttributeMap } from 'aws-sdk/clients/sns'
 import SNSMessageAttributeMapper from '../mappers/snsMessageAttributeMapper'
 import EventNotifierSNSMessageMapper from '../mappers/eventNotifierSNSMessageMapper'
@@ -36,7 +36,7 @@ export default class PermitObjectMessageService implements ObjectMessageService 
     @inject(TYPES.EventLogMapper) private eventLogMapper: EventLogMapper
   ) {}
 
-  public async sendMessageToSNS(sqsMessage: EventNotifierSQSMessage, timeReceived: Date, knex: Knex, knexPostgis: postgis.knexPostgis): Promise<void> {
+  public async sendMessageToSNS(sqsMessage: EventNotifierSQSMessage, timeReceived: Date, knex: Knex, knexPostgis: KnexPostgis): Promise<void> {
     try {
       const eventNotifierWorkData: EventNotifierWorkData = await this.getWorkData(sqsMessage.object_reference, knex, knexPostgis)
 
@@ -62,7 +62,7 @@ export default class PermitObjectMessageService implements ObjectMessageService 
     }
   }
 
-  private async getWorkData(permitReferenceNumber: string, knex: Knex, knexPostgis: postgis.Knex): Promise<EventNotifierWorkData> {
+  private async getWorkData(permitReferenceNumber: string, knex: Knex, knexPostgis: KnexPostgis): Promise<EventNotifierWorkData> {
     const workData: WorkData = await this.permitDao.getWorkData(permitReferenceNumber, knex, knexPostgis)
 
     const [locationTypes, permitConditions] = await Promise.all([

@@ -6,13 +6,13 @@ import { SQSHandler, SQSEvent, SQSRecord } from 'aws-lambda'
 import { EventNotifierSQSMessage } from 'street-manager-data'
 import ObjectMessageServiceDelegator from './services/objectMessageServiceDelegator'
 import * as Knex from 'knex'
-import * as postgis from 'knex-postgis'
+import { KnexPostgis } from 'knex-postgis'
 
 const logger: Logger = iocContainer.get<Logger>(TYPES.Logger)
 const objectMessageServiceDelegator: ObjectMessageServiceDelegator = iocContainer.get<ObjectMessageServiceDelegator>(TYPES.ObjectMessageServiceDelegator)
 const dbService: DBService = iocContainer.get<DBService>(TYPES.DBService)
 let knex: Knex
-let knexPostgis: postgis.KnexPostgis
+let knexPostgis: KnexPostgis
 
 export const handler: SQSHandler = async(event: SQSEvent) => {
   knex = await dbService.knex()
