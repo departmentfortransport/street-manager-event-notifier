@@ -11,10 +11,12 @@ export interface ActivityData {
   activity_coordinates: GeoJSON.GeometryObject | string
   activity_name: string
   activity_activity_type_id: RefActivityActivityType
+  activity_type_details?: string
   start_date: Date
   start_time?: Date
   end_date: Date
   end_time?: Date
+  activity_location_description: string
   traffic_management_required: boolean
   traffic_management_type_id: RefTrafficManagementType
   collaborative_working: boolean
