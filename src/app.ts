@@ -14,6 +14,10 @@ const dbService: DBService = iocContainer.get<DBService>(TYPES.DBService)
 let knex: Knex
 let knexPostgis: KnexPostgis
 
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled rejection at: ', promise, `\nReason: ${reason}`)
+})
+
 export const handler: SQSHandler = async(event: SQSEvent) => {
   knex = await dbService.knex()
   knexPostgis = await dbService.postgis()
