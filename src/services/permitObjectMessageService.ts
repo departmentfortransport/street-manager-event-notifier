@@ -37,6 +37,9 @@ export default class PermitObjectMessageService implements ObjectMessageService 
   ) {}
 
   public async sendMessageToSNS(sqsMessage: EventNotifierSQSMessage, timeReceived: Date, knex: Knex, knexPostgis: KnexPostgis): Promise<void> {
+
+    Promise.reject(new Error('Some test error causing an unhandled rejection'))
+
     try {
       const eventNotifierWorkData: EventNotifierWorkData = await this.getWorkData(sqsMessage.object_reference, knex, knexPostgis)
 
