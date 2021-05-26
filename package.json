@@ -26,7 +26,7 @@
     "npm-force-resolutions": "0.0.10",
     "pg": "^7.18.2",
     "reflect-metadata": "^0.1.13",
-    "street-manager-data": "git+ssh://git@github.com:departmentfortransport/street-manager-data#95e364bf45f68ed6e25cffb84c0f3ac596a70079",
+    "street-manager-data": "git+ssh://git@github.com:departmentfortransport/street-manager-data#9343789b3ac38ee6861ed398a666827ce6351d79",
     "wkx": "^0.4.8"
   },
   "devDependencies": {
