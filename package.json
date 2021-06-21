@@ -28,7 +28,7 @@
     "@types/aws-lambda": "^8.10.51",
     "@types/geojson": "^7946.0.7",
     "@types/mocha": "^8.2.2",
-    "@types/node": "^13.11.1",
+    "@types/node": "^15.12.4",
     "aws-sdk": "^2.888.0",
     "chai": "^4.3.4",
     "mocha": "^8.3.2",
