@@ -19,7 +19,7 @@
     "knex-postgis": "git+ssh://git@github.com:departmentfortransport/street-manager-knex-postgis#f9d09ca07b398c9552ce936b2f6ba7d77f658bb6",
     "lodash": "^4.17.21",
     "moment-timezone": "^0.5.33",
-    "pg": "^7.18.2",
+    "pg": "^8.6.0",
     "reflect-metadata": "^0.1.13",
     "street-manager-data": "git+ssh://git@github.com:departmentfortransport/street-manager-data#883e35f385d9e0aaa0c727ab2fcec52a354a3cdd",
     "wkx": "^0.4.8"
