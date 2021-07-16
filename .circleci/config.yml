@@ -12,13 +12,13 @@ aliases:
       export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID_CI_USER_DEV_ACC}"
       export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY_CI_USER_DEV_ACC}"
       TOKEN=$(aws sts assume-role \
-        --role-arn arn:aws:iam::${AWS_ACC_ID_DEV}:role/Dev-Admin \
+        --role-arn arn:aws:iam::${AWS_ACC_ID_DEV}:role/${AWS_ROLE_CI_ADMIN_DEV_ACC} \
         --role-session-name "$(head /dev/urandom | LC_CTYPE=C tr -dc A-Za-z0-9 | head -c 18 ; echo '')"\
         )
       echo "export AWS_ACCESS_KEY_ID=$(echo $TOKEN | python -c 'import json,sys;print json.load(sys.stdin)["Credentials"]["AccessKeyId"]' 2> /dev/null)" >> $BASH_ENV
       echo "export AWS_SECRET_ACCESS_KEY=$(echo $TOKEN | python -c 'import json,sys;print json.load(sys.stdin)["Credentials"]["SecretAccessKey"]' 2> /dev/null)" >> $BASH_ENV
       echo "export AWS_SESSION_TOKEN=$(echo $TOKEN | python -c 'import json,sys;print json.load(sys.stdin)["Credentials"]["SessionToken"]' 2> /dev/null)" >> $BASH_ENV
-      echo "export AWS_DEFAULT_REGION=eu-west-2" >> $BASH_ENV
+      echo "export AWS_DEFAULT_REGION=${AWS_REGION}" >> $BASH_ENV
   - &assume_preview_admin_role
     name: Assume role on Preview account
     command: |
@@ -60,19 +60,16 @@ aliases:
       echo "export AWS_SESSION_TOKEN=$(echo $TOKEN | python -c 'import json,sys;print json.load(sys.stdin)["Credentials"]["SessionToken"]' 2> /dev/null)" >> $BASH_ENV
   - &ecr_login_dev
     name: ECR login Dev
-    command: aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin ${AWS_ACC_ID_DEV}.dkr.ecr.eu-west-2.amazonaws.com
-
+    command: aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACC_ID_DEV}.dkr.ecr.${AWS_REGION}.amazonaws.com
   - &ecr_login_preview
     name: ECR login Preview
-    command: aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin ${AWS_ACC_ID_PREVIEW}.dkr.ecr.eu-west-2.amazonaws.com
-
+    command: aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACC_ID_PREVIEW}.dkr.ecr.${AWS_REGION}.amazonaws.com
   - &ecr_login_preprod
     name: ECR login Preprod
-    command: aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin ${AWS_ACC_ID_PREPROD}.dkr.ecr.eu-west-2.amazonaws.com
-
+    command: aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACC_ID_PREPROD}.dkr.ecr.${AWS_REGION}.amazonaws.com
   - &ecr_login_prod
     name: ECR login Production
-    command: aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin ${AWS_ACC_ID_PROD}.dkr.ecr.eu-west-2.amazonaws.com
+    command: aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACC_ID_PROD}.dkr.ecr.${AWS_REGION}.amazonaws.com
   - &build_and_release
     name: Build and release
     command: |
@@ -121,8 +118,8 @@ aliases:
           apk add git openssh-client jq curl
           curl -sLo /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/2.2.1/yq_linux_amd64
           chmod +x /usr/local/bin/yq
-          git config --global user.name "streetmanagerops"
-          git config --global user.email streetmanagerops@kainos.com
+          git config --global user.name ${GIT_CONFIG_USERNAME}
+          git config --global user.email ${GIT_CONFIG_EMAIL}
           git clone git@github.com:departmentfortransport/street-manager-$NAMESPACE.git
           cd street-manager-$NAMESPACE
           /usr/local/bin/yq w -i config.yaml apps.event_notifier.tag $CIRCLE_SHA1
